@@ -5,6 +5,7 @@ public class GroundCheckSystem : MonoBehaviour
 {
     private GroundCheckData groundCheckData;
     private Transform checkPoint;
+    private Collider[] _hitColliders = new Collider[1];
 
     void Awake()
     {
@@ -14,22 +15,45 @@ public class GroundCheckSystem : MonoBehaviour
 
     void Update()
     {
-        groundCheckData.isGrounded = PerformGroundCheck(
+        int hits = Physics.OverlapSphereNonAlloc(
             checkPoint.position,
             groundCheckData.groundCheckDistance,
-            groundCheckData.groundLayerMask
+            _hitColliders,
+            groundCheckData.groundLayerMask,
+            QueryTriggerInteraction.Ignore
         );
+
+        if (hits > 0)
+        {
+            groundCheckData.isGrounded = true;
+            Collider groundCollider = _hitColliders[0];
+
+            SurfaceData surfaceData = groundCollider.GetComponentInParent<SurfaceData>();
+
+            if (surfaceData != null)
+            {
+                groundCheckData.CurrentSurfaceType = surfaceData.Type;
+                groundCheckData.CurrentSurfaceData = surfaceData;
+            }
+            else
+            {
+                groundCheckData.CurrentSurfaceType = SurfaceType.Ground;
+                groundCheckData.CurrentSurfaceData = null;
+            }
+            _hitColliders[0] = null;
+        }
+        else
+        {
+            groundCheckData.isGrounded = false;
+            groundCheckData.CurrentSurfaceType = SurfaceType.Ground;
+            groundCheckData.CurrentSurfaceData = null;
+        }
     }
 
-    public static bool PerformGroundCheck(Vector3 position, float distance, LayerMask layerMask)
-    {
-        return Physics.CheckSphere(position, distance, layerMask, QueryTriggerInteraction.Ignore);
-        // return Physics.Raycast(position, Vector3.down, distance, layerMask, QueryTriggerInteraction.Ignore);
-    }
     void OnDrawGizmosSelected()
     {
-        if (checkPoint == null) checkPoint = transform;
+        if (checkPoint == null) return;
         Gizmos.color = Color.yellow;
-        Gizmos.DrawWireSphere(checkPoint.position, GetComponent<GroundCheckData>()?.groundCheckDistance ?? 0.2f);
+        Gizmos.DrawWireSphere(checkPoint.position, groundCheckData != null ? groundCheckData.groundCheckDistance : GetComponent<GroundCheckData>().groundCheckDistance);
     }
 } 
