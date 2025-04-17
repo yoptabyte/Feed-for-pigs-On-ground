@@ -16,7 +16,6 @@ public class WallTrap : BaseTrap
 
     protected override void OnTriggerEnter(Collider other)
     {
-        // no triger
     }
 
     protected override void OnCollisionEnter(Collision collision)

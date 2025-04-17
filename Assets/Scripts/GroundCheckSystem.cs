@@ -56,4 +56,4 @@ public class GroundCheckSystem : MonoBehaviour
         Gizmos.color = Color.yellow;
         Gizmos.DrawWireSphere(checkPoint.position, groundCheckData != null ? groundCheckData.groundCheckDistance : GetComponent<GroundCheckData>().groundCheckDistance);
     }
-} 
+}

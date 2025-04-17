@@ -34,14 +34,16 @@ public class MovementSystem : MonoBehaviour
             slipperiness = groundCheckData.CurrentSurfaceData.Slipperiness;
         }
 
+        float baseMaxSpeed = movementData.moveSpeed * 1.5f;
+        movementData.maxSpeed = baseMaxSpeed;
+        
         float currentMaxSpeed = movementData.maxSpeed * speedMultiplier;
         float currentAcceleration = movementData.acceleration * accelerationMultiplier;
         float currentDrag = movementData.drag * (1.0f - slipperiness);
         float currentBrakingDrag = movementData.drag * movementData.brakingDragMultiplier * (1.0f - slipperiness);
 
-        currentDrag = Mathf.Max(currentDrag, 0.01f);
-        currentBrakingDrag = Mathf.Max(currentBrakingDrag, 0.05f);
-
+        currentDrag = Mathf.Max(currentDrag * 0.5f, 0.01f);
+        currentBrakingDrag = Mathf.Max(currentBrakingDrag * 0.7f, 0.05f);
 
         float turnInput = inputData.moveInput.x;
         float turnAmount = turnInput * movementData.rotationSpeed * Time.fixedDeltaTime;

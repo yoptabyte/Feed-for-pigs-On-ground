@@ -8,6 +8,9 @@ public class Health : MonoBehaviour
     [SerializeField]
     private int currentHP;
 
+    public float timeSinceLastDamage = float.MaxValue; 
+    public float regenerationDelay = 5.0f; 
+
     public UnityEvent<int> OnDamageTaken;
     public UnityEvent OnDeath;
 
@@ -18,6 +21,15 @@ public class Health : MonoBehaviour
     private void Awake()
     {
         currentHP = maxHP;
+        timeSinceLastDamage = float.MaxValue; 
+    }
+
+    private void Update() 
+    {
+        if (IsAlive && timeSinceLastDamage < regenerationDelay)
+        {
+            timeSinceLastDamage += Time.deltaTime;
+        }
     }
 
     public void TakeDamage(int damageAmount)
@@ -29,6 +41,8 @@ public class Health : MonoBehaviour
 
         currentHP -= damageAmount;
         currentHP = Mathf.Max(currentHP, 0);
+
+        timeSinceLastDamage = 0f; 
 
         OnDamageTaken?.Invoke(damageAmount);
         Debug.Log($"{gameObject.name} took {damageAmount} damage. HP left: {currentHP}");
@@ -48,12 +62,19 @@ public class Health : MonoBehaviour
 
     public void Heal(int healAmount)
     {
-        if (!IsAlive || healAmount <= 0)
+        if (!IsAlive || healAmount <= 0 || currentHP >= maxHP) 
         {
             return;
         }
 
         currentHP += healAmount;
         currentHP = Mathf.Min(currentHP, maxHP);
+        Debug.Log($"{gameObject.name} healed {healAmount}. HP: {currentHP}"); 
     }
-} 
+
+    
+    public bool CanRegenerate()
+    {
+        return IsAlive && timeSinceLastDamage >= regenerationDelay && currentHP < maxHP;
+    }
+}

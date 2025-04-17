@@ -76,7 +76,7 @@ public class ShotgunTrap : BaseTrap
             else
             {
                 Debug.LogError($"Projectile Prefab {projectilePrefab.name} is missing Projectile component!", this);
-                Destroy(projectileGO)
+                Destroy(projectileGO);
             }
         }
     }
