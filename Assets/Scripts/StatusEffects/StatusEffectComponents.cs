@@ -13,15 +13,10 @@ public enum EffectType
     JumpHeightBoost 
 }
 
-
-
 public struct PlayerStatusEffectData : IComponentData
 {
     public EffectType Type;
     public float RemainingDuration;
-
-    
-    
     public float EffectStrength; 
     public float OriginalValue; 
 }

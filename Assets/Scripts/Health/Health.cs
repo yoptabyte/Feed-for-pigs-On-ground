@@ -7,9 +7,15 @@ public class Health : MonoBehaviour
     private int maxHP = 3;
     [SerializeField]
     private int currentHP;
+    [SerializeField]
+    private float regenerationRate = 0.5f; 
 
-    public float timeSinceLastDamage = float.MaxValue; 
-    public float regenerationDelay = 5.0f; 
+    public float timeSinceLastDamage = float.MaxValue;
+    public float regenerationDelay = 3.0f; 
+
+    private float regenerationProgress = 0f;
+
+    private bool canStartRegeneration = false; 
 
     public UnityEvent<int> OnDamageTaken;
     public UnityEvent OnDeath;
@@ -21,14 +27,31 @@ public class Health : MonoBehaviour
     private void Awake()
     {
         currentHP = maxHP;
-        timeSinceLastDamage = float.MaxValue; 
+        timeSinceLastDamage = float.MaxValue;
+        regenerationProgress = 0f;
+        canStartRegeneration = false; 
     }
 
-    private void Update() 
+    private void Update()
     {
-        if (IsAlive && timeSinceLastDamage < regenerationDelay)
+        if (IsAlive && canStartRegeneration && timeSinceLastDamage < regenerationDelay)
         {
             timeSinceLastDamage += Time.deltaTime;
+        }
+
+        if (CanRegenerate())
+        {
+            regenerationProgress += regenerationRate * Time.deltaTime;
+            if (regenerationProgress >= 1.0f)
+            {
+                int healAmountInt = Mathf.FloorToInt(regenerationProgress);
+                Heal(healAmountInt);
+                regenerationProgress -= healAmountInt; 
+            }
+        }
+        else
+        {
+            regenerationProgress = 0f;
         }
     }
 
@@ -42,7 +65,9 @@ public class Health : MonoBehaviour
         currentHP -= damageAmount;
         currentHP = Mathf.Max(currentHP, 0);
 
-        timeSinceLastDamage = 0f; 
+        timeSinceLastDamage = 0f;
+        canStartRegeneration = false; 
+        regenerationProgress = 0f;    
 
         OnDamageTaken?.Invoke(damageAmount);
         Debug.Log($"{gameObject.name} took {damageAmount} damage. HP left: {currentHP}");
@@ -62,19 +87,36 @@ public class Health : MonoBehaviour
 
     public void Heal(int healAmount)
     {
-        if (!IsAlive || healAmount <= 0 || currentHP >= maxHP) 
+        if (!IsAlive || healAmount <= 0 || currentHP >= maxHP)
         {
+            // regenerationProgress = 0f;
             return;
         }
 
+        int oldHP = currentHP;
         currentHP += healAmount;
         currentHP = Mathf.Min(currentHP, maxHP);
-        Debug.Log($"{gameObject.name} healed {healAmount}. HP: {currentHP}"); 
+        Debug.Log($"{gameObject.name} healed {currentHP - oldHP}. HP: {currentHP}"); 
+
+        if (currentHP >= maxHP)
+        {
+             regenerationProgress = 0f;
+             canStartRegeneration = false;
+        }
     }
 
-    
+    public void EnableRegeneration()
+    {
+        if (IsAlive && currentHP < maxHP) 
+        {
+            canStartRegeneration = true;
+            timeSinceLastDamage = 0f; 
+            Debug.Log($"{gameObject.name} regeneration enabled. Delay timer started.");
+        }
+    }
+
     public bool CanRegenerate()
     {
-        return IsAlive && timeSinceLastDamage >= regenerationDelay && currentHP < maxHP;
+        return canStartRegeneration && IsAlive && timeSinceLastDamage >= regenerationDelay && currentHP < maxHP;
     }
 }

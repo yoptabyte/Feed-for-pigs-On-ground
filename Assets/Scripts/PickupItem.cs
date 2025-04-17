@@ -1,6 +1,7 @@
 using UnityEngine;
 using Unity.Entities;
 using Unity.Transforms;
+using UnityEngine.Events;
 // using StatusEffects;
 // using HealthNamespace;
 
@@ -34,7 +35,7 @@ public class PickupItem : MonoBehaviour
         if (playerEntity == Entity.Null || effectType == EffectType.None)
         {
             if (playerEntity == Entity.Null) {
-                 Debug.LogWarning($"PickupItem: No player Entity found for collider {other.name}. Pickup aborted.");
+                Debug.LogWarning($"PickupItem: No player Entity found for collider {other.name}. Pickup aborted.");
             }
             return;
         }
@@ -88,6 +89,43 @@ public class PickupItem : MonoBehaviour
     private void ApplyEffect(Entity playerEntity, MovementData movementData)
     {
         var entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
+
+        Health playerHealth = null;
+        if (effectType == EffectType.Regeneration)
+        {
+            GameObject playerObject = movementData?.gameObject;
+
+            if (playerObject == null)
+            {
+                 EntityLink[] allEntityLinks = FindObjectsOfType<EntityLink>();
+                 foreach (var link in allEntityLinks)
+                 {
+                     if (link.Entity == playerEntity)
+                     {
+                        playerObject = link.gameObject;
+                        break;
+                     }
+                 }
+            }
+
+            if (playerObject != null)
+            {
+                playerHealth = playerObject.GetComponent<Health>();
+                if (playerHealth == null)
+                {
+                     playerHealth = playerObject.GetComponentInParent<Health>();
+                }
+
+                if (playerHealth == null)
+                {
+                    Debug.LogWarning($"PickupItem: Health component not found on player object {playerObject.name} (Entity: {playerEntity}) for Regeneration effect.");
+                }
+            }
+             else
+            {
+                Debug.LogError($"PickupItem: Could not find player GameObject for Entity {playerEntity} to get Health component.");
+            }
+        }
 
         float originalValue = 0f;
         if (effectType == EffectType.SpeedBoost || effectType == EffectType.TurnSpeedBoost || effectType == EffectType.JumpHeightBoost)
@@ -162,6 +200,12 @@ public class PickupItem : MonoBehaviour
             };
             entityManager.AddComponentData(playerEntity, newEffect);
             Debug.Log($"Applied new {effectType} to entity {playerEntity}. Duration: {duration}, OriginalValue: {originalValue}");
+        }
+
+        if (effectType == EffectType.Regeneration && playerHealth != null)
+        {
+            playerHealth.EnableRegeneration();
+            Debug.Log($"PickupItem: Called EnableRegeneration() on {playerHealth.gameObject.name} for entity {playerEntity}.");
         }
 
         if (movementData != null && (effectType == EffectType.SpeedBoost || effectType == EffectType.TurnSpeedBoost || effectType == EffectType.JumpHeightBoost))
