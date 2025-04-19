@@ -15,6 +15,15 @@ public class PickupItem : MonoBehaviour
     public bool stackable = false;
     public float maxStackDuration = 30.0f;
 
+    [Header("Animation Settings")]
+    public float bounceHeight = 0.1f; 
+    public float bounceSpeed = 2f;    
+    public float rotationSpeed = 50f; 
+    public Vector3 rotationAxis = Vector3.up; 
+
+    private Vector3 initialPosition;
+    private float randomOffset;
+
     private void Awake()
     {
         Collider col = GetComponent<Collider>();
@@ -26,6 +35,17 @@ public class PickupItem : MonoBehaviour
         {
             Debug.LogError($"PickupItem on {gameObject.name} requires a Collider component!");
         }
+
+        initialPosition = transform.position;
+        randomOffset = Random.Range(0f, 2f * Mathf.PI);
+    }
+
+    private void Update()
+    {
+        float newY = initialPosition.y + Mathf.Sin((Time.time + randomOffset) * bounceSpeed) * bounceHeight;
+        transform.position = new Vector3(initialPosition.x, newY, initialPosition.z);
+
+        transform.Rotate(rotationAxis, rotationSpeed * Time.deltaTime);
     }
 
     private void OnTriggerEnter(Collider other)
