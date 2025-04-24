@@ -13,6 +13,9 @@ public class TemporaryRastaActivator : MonoBehaviour
 
     public float activationDuration = 10.0f;
 
+    public AudioSource audioSource;
+    public AudioClip activationClip;
+
     private Coroutine deactivationCoroutine;
 
     void Start()
@@ -34,6 +37,16 @@ public class TemporaryRastaActivator : MonoBehaviour
         if (uiImageToShow != null)
         {
             uiImageToShow.enabled = false;
+        }
+
+        if (audioSource == null)
+        {
+            Debug.LogWarning("AudioSource не назначен в TemporaryRastaActivator.");
+            audioSource = GetComponent<AudioSource>();
+            if (audioSource == null)
+            {
+                 Debug.LogError("Компонент AudioSource не найден на GameObject и не назначен вручную.");
+            }
         }
     }
 
@@ -69,6 +82,13 @@ public class TemporaryRastaActivator : MonoBehaviour
                 uiImageToShow.enabled = true;
             }
 
+            if (audioSource != null && activationClip != null)
+            {
+                audioSource.clip = activationClip;
+                audioSource.Play();
+                Debug.Log("Запускаю проигрывание трека.");
+            }
+
             deactivationCoroutine = StartCoroutine(DeactivateAfterDelay());
         }
     }
@@ -98,6 +118,12 @@ public class TemporaryRastaActivator : MonoBehaviour
         if (uiImageToShow != null)
         {
             uiImageToShow.enabled = false;
+        }
+
+        if (audioSource != null && audioSource.isPlaying)
+        {
+            audioSource.Stop();
+            Debug.Log("Останавливаю проигрывание трека.");
         }
 
         deactivationCoroutine = null;
