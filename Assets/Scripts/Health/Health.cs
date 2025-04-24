@@ -36,7 +36,7 @@ public class Health : MonoBehaviour
     {
         if (IsAlive && canStartRegeneration && timeSinceLastDamage < regenerationDelay)
         {
-            timeSinceLastDamage += Time.deltaTime;
+          timeSinceLastDamage += Time.deltaTime;
         }
 
         if (CanRegenerate())
@@ -44,14 +44,14 @@ public class Health : MonoBehaviour
             regenerationProgress += regenerationRate * Time.deltaTime;
             if (regenerationProgress >= 1.0f)
             {
-                int healAmountInt = Mathf.FloorToInt(regenerationProgress);
-                Heal(healAmountInt);
-                regenerationProgress -= healAmountInt; 
+              int healAmountInt = Mathf.FloorToInt(regenerationProgress);
+              Heal(healAmountInt);
+              regenerationProgress -= healAmountInt; 
             }
         }
         else
         {
-            regenerationProgress = 0f;
+          regenerationProgress = 0f;
         }
     }
 
@@ -59,7 +59,7 @@ public class Health : MonoBehaviour
     {
         if (!IsAlive || damageAmount <= 0)
         {
-            return;
+          return;
         }
 
         currentHP -= damageAmount;
