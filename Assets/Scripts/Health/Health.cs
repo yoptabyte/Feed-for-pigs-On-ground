@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.Events;
+using System.Collections;
 
 public class Health : MonoBehaviour
 {
@@ -17,6 +18,9 @@ public class Health : MonoBehaviour
 
     private bool canStartRegeneration = false; 
 
+    private Vector3 originalScale;
+    private Coroutine flattenCoroutine;
+
     public UnityEvent<int> OnDamageTaken;
     public UnityEvent OnDeath;
 
@@ -30,6 +34,7 @@ public class Health : MonoBehaviour
         timeSinceLastDamage = float.MaxValue;
         regenerationProgress = 0f;
         canStartRegeneration = false; 
+        originalScale = transform.localScale;
     }
 
     private void Update()
@@ -124,12 +129,27 @@ public class Health : MonoBehaviour
     {
         if (other.gameObject.CompareTag("Vehicle"))
         {
-            Vector3 currentScale = transform.localScale;
-            transform.localScale = new Vector3(currentScale.x, 0.1f, currentScale.z);
-
-            TakeDamage(1);
-
-            Debug.Log($"{gameObject.name} entered Vehicle trigger. Changed Y scale to 0.1 and took 1 damage.");
+            if (flattenCoroutine != null)
+            {
+                StopCoroutine(flattenCoroutine);
+            }
+            flattenCoroutine = StartCoroutine(FlattenEffect(5.0f));
         }
+    }
+
+    private IEnumerator FlattenEffect(float duration)
+    {
+        Debug.Log($"{gameObject.name} entered Vehicle trigger. Starting flatten effect for {duration} seconds.");
+        
+        transform.localScale = new Vector3(originalScale.x, 0.1f, originalScale.z);
+        
+        TakeDamage(1);
+        
+        yield return new WaitForSeconds(duration);
+        
+        transform.localScale = originalScale;
+        Debug.Log($"{gameObject.name} flatten effect finished. Restored original scale.");
+        
+        flattenCoroutine = null;
     }
 }
