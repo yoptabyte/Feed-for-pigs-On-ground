@@ -119,4 +119,17 @@ public class Health : MonoBehaviour
     {
         return canStartRegeneration && IsAlive && timeSinceLastDamage >= regenerationDelay && currentHP < maxHP;
     }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.CompareTag("Vehicle"))
+        {
+            Vector3 currentScale = transform.localScale;
+            transform.localScale = new Vector3(currentScale.x, 0.1f, currentScale.z);
+
+            TakeDamage(1);
+
+            Debug.Log($"{gameObject.name} entered Vehicle trigger. Changed Y scale to 0.1 and took 1 damage.");
+        }
+    }
 }
