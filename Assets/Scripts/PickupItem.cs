@@ -73,6 +73,9 @@ public class PickupItem : MonoBehaviour
 
         ApplyEffect(playerEntity, movementData);
 
+        // Add to statistics tracking
+        AddToStatistics(other.gameObject);
+
         Debug.Log($"Destroying pickup: {gameObject.name} after applying effect {effectType}");
         Destroy(gameObject);
     }
@@ -320,6 +323,23 @@ public class PickupItem : MonoBehaviour
                     Debug.LogWarning($"RestoreValueFromEffect: Did not restore JumpHeightBoost. Current jump force ({movementData.jumpForce}) does not match expected modified value ({effectToRestoreFrom.OriginalValue * effectToRestoreFrom.EffectStrength}). Original intended: {effectToRestoreFrom.OriginalValue}");
                 }
                 break;
+        }
+    }
+
+    private void AddToStatistics(GameObject pickedUpBy)
+    {
+        // Try to get GameStatsTracker instance
+        GameStatsTracker statsTracker = GameStatsTracker.Instance;
+        if (statsTracker != null)
+        {
+            string itemName = gameObject.name;
+            statsTracker.AddItemEaten(itemName);
+            
+            Debug.Log($"PickupItem: Зарегистрирован подбор предмета '{itemName}' игроком {pickedUpBy.name}");
+        }
+        else
+        {
+            Debug.LogWarning($"PickupItem: GameStatsTracker не найден для предмета {gameObject.name}");
         }
     }
 

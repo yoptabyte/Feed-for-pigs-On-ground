@@ -7,6 +7,7 @@ public class InGameMenuManager : MonoBehaviour
     [Header("UI Panels")]
     public GameObject pauseMenuPanel;
     public GameObject settingsPanel;
+    public GameObject optionsPanel;
     
     [Header("Pause Menu Buttons")]
     public Button resumeButton;
@@ -79,6 +80,29 @@ public class InGameMenuManager : MonoBehaviour
         {
             settingsPanel = FindChildByName("SettingsPanel");
             if (settingsPanel != null) Debug.Log("Found SettingsPanel");
+        }
+        
+        if (optionsPanel == null)
+        {
+            optionsPanel = FindChildByName("OptionsPanel");
+            if (optionsPanel != null) 
+            {
+                Debug.Log("Found OptionsPanel as child");
+            }
+            else
+            {
+                // Search for OptionsPanel in the entire scene
+                GameObject[] allObjects = FindObjectsOfType<GameObject>();
+                foreach (GameObject obj in allObjects)
+                {
+                    if (obj.name == "OptionsPanel")
+                    {
+                        optionsPanel = obj;
+                        Debug.Log("Found OptionsPanel in scene");
+                        break;
+                    }
+                }
+            }
         }
         
         // Find buttons
@@ -181,6 +205,7 @@ public class InGameMenuManager : MonoBehaviour
         Debug.Log("=== IN-GAME MENU VALIDATION ===");
         Debug.Log($"Pause Menu Panel: {(pauseMenuPanel != null ? "✓" : "✗")}");
         Debug.Log($"Settings Panel: {(settingsPanel != null ? "✓" : "✗")}");
+        Debug.Log($"Options Panel: {(optionsPanel != null ? "✓" : "✗")}");
         Debug.Log($"Resume Button: {(resumeButton != null ? "✓" : "✗")}");
         Debug.Log($"Settings Button: {(settingsButton != null ? "✓" : "✗")}");
         Debug.Log($"Main Menu Button: {(mainMenuButton != null ? "✓" : "✗")}");
@@ -211,6 +236,10 @@ public class InGameMenuManager : MonoBehaviour
         
         if (pauseMenuPanel != null)
             pauseMenuPanel.SetActive(true);
+            
+        // Activate OptionsPanel if assigned
+        if (optionsPanel != null)
+            optionsPanel.SetActive(true);
         
         // Show cursor when paused
         Cursor.visible = true;
@@ -230,6 +259,10 @@ public class InGameMenuManager : MonoBehaviour
             
         if (settingsPanel != null)
             settingsPanel.SetActive(false);
+            
+        // Deactivate OptionsPanel if assigned
+        if (optionsPanel != null)
+            optionsPanel.SetActive(false);
         
         // Hide cursor when resumed (if configured)
         if (hideCursorInGame)
@@ -281,6 +314,12 @@ public class InGameMenuManager : MonoBehaviour
         
         // Resume time before changing scene
         Time.timeScale = 1f;
+        
+        // Ensure cursor is visible and unlocked for main menu
+        Cursor.visible = true;
+        Cursor.lockState = CursorLockMode.None;
+        
+        Debug.Log($"InGameMenuManager: Курсор подготовлен для главного меню - Visible: {Cursor.visible}, LockState: {Cursor.lockState}");
         
         // Load main menu scene
         if (!string.IsNullOrEmpty(mainMenuSceneName))
