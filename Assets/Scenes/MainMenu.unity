@@ -2501,6 +2501,71 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_ShowMaskGraphic: 0
+--- !u!1 &651737258
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 651737260}
+  - component: {fileID: 651737259}
+  m_Layer: 0
+  m_Name: AudioManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &651737259
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 651737258}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e60368d0cdaacfb139f040b17bbc9e80, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  masterVolume: 1
+  musicVolume: 0.694
+  sfxVolume: 0.878
+  audioMixer: {fileID: 0}
+  autoManageAudioSources: 1
+  updateInterval: 1
+  musicKeywords:
+  - all_pigs
+  - three_little
+  - victory
+  - lose_pig
+  sfxKeywords:
+  - walk
+  - dog
+  - cow
+  - die
+  - touch
+  - saw
+  - car
+  - shot
+  - canon
+--- !u!4 &651737260
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 651737258}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 925.3216, y: 632.5395, z: 50.75665}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &701497948
 GameObject:
   m_ObjectHideFlags: 0
@@ -2867,9 +2932,13 @@ MonoBehaviour:
   musicVolumeSlider: {fileID: 1571999782}
   sfxVolumeSlider: {fileID: 1555264978}
   audioMixer: {fileID: 0}
+  musicAudioSources: []
+  sfxAudioSources: []
+  autoFindAudioSources: 1
   applyButton: {fileID: 1045808459}
   resetButton: {fileID: 2045742968}
   closeButton: {fileID: 181043271}
+  mainMenuButton: {fileID: 0}
   isInGameSettings: 0
   autoFindComponents: 0
 --- !u!1 &772681195
@@ -6671,6 +6740,67 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1677473947}
   m_CullTransparentMesh: 1
+--- !u!1 &1694718475
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1694718476}
+  - component: {fileID: 1694718477}
+  m_Layer: 0
+  m_Name: GraphicsSettingsManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1694718476
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1694718475}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 925.3216, y: 632.5395, z: 50.75665}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1694718477
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1694718475}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b847e06bb20edfe7bb5a60e9b7ddfd31, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  customQualityNames:
+  - Low
+  - Medium
+  - High
+  - Ultra
+  lowQualityURP: {fileID: 0}
+  mediumQualityURP: {fileID: 0}
+  highQualityURP: {fileID: 0}
+  ultraQualityURP: {fileID: 0}
+  autoDetectResolutions: 1
+  customResolutions:
+  - {x: 1280, y: 720}
+  - {x: 1920, y: 1080}
+  - {x: 2560, y: 1440}
+  - {x: 3840, y: 2160}
+  enableVSyncByDefault: 1
+  targetFrameRate: 60
 --- !u!1 &1706447885
 GameObject:
   m_ObjectHideFlags: 0
@@ -8270,3 +8400,5 @@ SceneRoots:
   m_Roots:
   - {fileID: 1787913244}
   - {fileID: 497965433}
+  - {fileID: 651737260}
+  - {fileID: 1694718476}

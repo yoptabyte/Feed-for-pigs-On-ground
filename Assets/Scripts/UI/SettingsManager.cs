@@ -16,6 +16,14 @@ public class SettingsManager : MonoBehaviour
     public Slider sfxVolumeSlider;
     public AudioMixer audioMixer;
     
+    [Header("Audio Sources (Fallback when no AudioMixer)")]
+    [Tooltip("List of AudioSources that should be treated as music")]
+    public AudioSource[] musicAudioSources;
+    [Tooltip("List of AudioSources that should be treated as SFX")]
+    public AudioSource[] sfxAudioSources;
+    [Tooltip("Automatically find audio sources if not assigned")]
+    public bool autoFindAudioSources = true;
+    
     [Header("UI Elements")]
     public Button applyButton;
     public Button resetButton;
@@ -33,9 +41,17 @@ public class SettingsManager : MonoBehaviour
     
     private void Start()
     {
+        // Force initialize AudioManager to ensure it exists
+        AudioManager.Initialize();
+        
         if (autoFindComponents)
         {
             AutoFindUIComponents();
+        }
+        
+        if (autoFindAudioSources)
+        {
+            AutoFindAudioSources();
         }
         
         ValidateComponents();
@@ -53,39 +69,63 @@ public class SettingsManager : MonoBehaviour
         if (qualityDropdown == null)
         {
             qualityDropdown = FindChildComponent<Dropdown>("QualityDropdown");
-            if (qualityDropdown != null) Debug.Log("Found QualityDropdown");
+            if (qualityDropdown != null) 
+            {
+                Debug.Log("Found QualityDropdown");
+                CreateDropdownLabel(qualityDropdown, "Graphics Quality");
+            }
         }
         
         if (resolutionDropdown == null)
         {
             resolutionDropdown = FindChildComponent<Dropdown>("ResolutionDropdown");
-            if (resolutionDropdown != null) Debug.Log("Found ResolutionDropdown");
+            if (resolutionDropdown != null) 
+            {
+                Debug.Log("Found ResolutionDropdown");
+                CreateDropdownLabel(resolutionDropdown, "Screen Resolution");
+            }
         }
         
         // Find toggle
         if (fullscreenToggle == null)
         {
             fullscreenToggle = FindChildComponent<Toggle>("FullscreenToggle");
-            if (fullscreenToggle != null) Debug.Log("Found FullscreenToggle");
+            if (fullscreenToggle != null) 
+            {
+                Debug.Log("Found FullscreenToggle");
+                CreateToggleLabel(fullscreenToggle, "Fullscreen Mode");
+            }
         }
         
         // Find sliders
         if (masterVolumeSlider == null)
         {
             masterVolumeSlider = FindChildComponent<Slider>("MasterVolumeSlider");
-            if (masterVolumeSlider != null) Debug.Log("Found MasterVolumeSlider");
+            if (masterVolumeSlider != null) 
+            {
+                Debug.Log("Found MasterVolumeSlider");
+                CreateSliderLabel(masterVolumeSlider, "Master Volume");
+            }
         }
         
         if (musicVolumeSlider == null)
         {
             musicVolumeSlider = FindChildComponent<Slider>("MusicVolumeSlider");
-            if (musicVolumeSlider != null) Debug.Log("Found MusicVolumeSlider");
+            if (musicVolumeSlider != null) 
+            {
+                Debug.Log("Found MusicVolumeSlider");
+                CreateSliderLabel(musicVolumeSlider, "Music Volume");
+            }
         }
         
         if (sfxVolumeSlider == null)
         {
             sfxVolumeSlider = FindChildComponent<Slider>("SFXVolumeSlider");
-            if (sfxVolumeSlider != null) Debug.Log("Found SFXVolumeSlider");
+            if (sfxVolumeSlider != null) 
+            {
+                Debug.Log("Found SFXVolumeSlider");
+                CreateSliderLabel(sfxVolumeSlider, "Sound Effects Volume");
+            }
         }
         
         // Find buttons
@@ -111,6 +151,203 @@ public class SettingsManager : MonoBehaviour
         {
             mainMenuButton = FindChildComponent<Button>("MainMenuButton");
             if (mainMenuButton != null) Debug.Log("Found MainMenuButton");
+        }
+    }
+    
+    /// <summary>
+    /// Create a text label above a slider if it doesn't already exist
+    /// </summary>
+    private void CreateSliderLabel(Slider slider, string labelText)
+    {
+        if (slider == null) return;
+        
+        // Check if label already exists
+        Transform existingLabel = slider.transform.Find("Label");
+        if (existingLabel != null) 
+        {
+            // Update existing label text
+            UnityEngine.UI.Text textComponent = existingLabel.GetComponent<UnityEngine.UI.Text>();
+            if (textComponent != null)
+            {
+                textComponent.text = labelText;
+                Debug.Log($"Updated existing label for {slider.name}: {labelText}");
+            }
+            return;
+        }
+        
+        // Create new label GameObject
+        GameObject labelObj = new GameObject("Label");
+        labelObj.transform.SetParent(slider.transform, false);
+        
+        // Add RectTransform
+        RectTransform labelRect = labelObj.AddComponent<RectTransform>();
+        
+        // Position above slider
+        labelRect.anchorMin = new Vector2(0f, 1f);
+        labelRect.anchorMax = new Vector2(1f, 1f);
+        labelRect.anchoredPosition = new Vector2(0f, 10f);
+        labelRect.sizeDelta = new Vector2(0f, 20f);
+        
+        // Add Text component
+        UnityEngine.UI.Text labelTextComponent = labelObj.AddComponent<UnityEngine.UI.Text>();
+        labelTextComponent.text = labelText;
+        labelTextComponent.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+        labelTextComponent.fontSize = 14;
+        labelTextComponent.color = Color.white;
+        labelTextComponent.alignment = TextAnchor.MiddleLeft;
+        
+        // Try to match parent's text style if possible
+        UnityEngine.UI.Text parentText = slider.GetComponentInChildren<UnityEngine.UI.Text>();
+        if (parentText != null)
+        {
+            labelTextComponent.font = parentText.font;
+            labelTextComponent.fontSize = parentText.fontSize;
+            labelTextComponent.color = parentText.color;
+        }
+        
+        Debug.Log($"Created label for {slider.name}: {labelText}");
+    }
+    
+    /// <summary>
+    /// Create a text label above a dropdown if it doesn't already exist
+    /// </summary>
+    private void CreateDropdownLabel(Dropdown dropdown, string labelText)
+    {
+        if (dropdown == null) return;
+        
+        // Check if label already exists
+        Transform existingLabel = dropdown.transform.Find("Label");
+        if (existingLabel != null) 
+        {
+            // Update existing label text
+            UnityEngine.UI.Text textComponent = existingLabel.GetComponent<UnityEngine.UI.Text>();
+            if (textComponent != null)
+            {
+                textComponent.text = labelText;
+                Debug.Log($"Updated existing label for {dropdown.name}: {labelText}");
+            }
+            return;
+        }
+        
+        // Create new label GameObject
+        GameObject labelObj = new GameObject("Label");
+        labelObj.transform.SetParent(dropdown.transform, false);
+        
+        // Add RectTransform
+        RectTransform labelRect = labelObj.AddComponent<RectTransform>();
+        
+        // Position above dropdown
+        labelRect.anchorMin = new Vector2(0f, 1f);
+        labelRect.anchorMax = new Vector2(1f, 1f);
+        labelRect.anchoredPosition = new Vector2(0f, 10f);
+        labelRect.sizeDelta = new Vector2(0f, 20f);
+        
+        // Add Text component
+        UnityEngine.UI.Text labelTextComponent = labelObj.AddComponent<UnityEngine.UI.Text>();
+        labelTextComponent.text = labelText;
+        labelTextComponent.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+        labelTextComponent.fontSize = 14;
+        labelTextComponent.color = Color.white;
+        labelTextComponent.alignment = TextAnchor.MiddleLeft;
+        
+        // Try to match dropdown's text style
+        UnityEngine.UI.Text dropdownText = dropdown.GetComponentInChildren<UnityEngine.UI.Text>();
+        if (dropdownText != null)
+        {
+            labelTextComponent.font = dropdownText.font;
+            labelTextComponent.fontSize = dropdownText.fontSize;
+            labelTextComponent.color = dropdownText.color;
+        }
+        
+        Debug.Log($"Created label for {dropdown.name}: {labelText}");
+    }
+    
+    /// <summary>
+    /// Create a text label next to a toggle if it doesn't already exist
+    /// </summary>
+    private void CreateToggleLabel(Toggle toggle, string labelText)
+    {
+        if (toggle == null) return;
+        
+        // Check if toggle already has a label component
+        UnityEngine.UI.Text existingText = toggle.GetComponentInChildren<UnityEngine.UI.Text>();
+        if (existingText != null)
+        {
+            // Update existing text
+            existingText.text = labelText;
+            Debug.Log($"Updated existing text for {toggle.name}: {labelText}");
+            return;
+        }
+        
+        // Create new label GameObject
+        GameObject labelObj = new GameObject("Label");
+        labelObj.transform.SetParent(toggle.transform, false);
+        
+        // Add RectTransform
+        RectTransform labelRect = labelObj.AddComponent<RectTransform>();
+        
+        // Position next to toggle
+        labelRect.anchorMin = new Vector2(0f, 0f);
+        labelRect.anchorMax = new Vector2(1f, 1f);
+        labelRect.anchoredPosition = new Vector2(25f, 0f);
+        labelRect.sizeDelta = new Vector2(-25f, 0f);
+        
+        // Add Text component
+        UnityEngine.UI.Text labelTextComponent = labelObj.AddComponent<UnityEngine.UI.Text>();
+        labelTextComponent.text = labelText;
+        labelTextComponent.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+        labelTextComponent.fontSize = 14;
+        labelTextComponent.color = Color.white;
+        labelTextComponent.alignment = TextAnchor.MiddleLeft;
+        
+        Debug.Log($"Created label for {toggle.name}: {labelText}");
+    }
+    
+    private void AutoFindAudioSources()
+    {
+        Debug.Log("Auto-finding AudioSources...");
+        
+        // Find all AudioSources in scene if none assigned
+        if ((musicAudioSources == null || musicAudioSources.Length == 0) && 
+            (sfxAudioSources == null || sfxAudioSources.Length == 0))
+        {
+            AudioSource[] allAudioSources = FindObjectsOfType<AudioSource>();
+            List<AudioSource> musicSources = new List<AudioSource>();
+            List<AudioSource> sfxSources = new List<AudioSource>();
+            
+            foreach (AudioSource source in allAudioSources)
+            {
+                if (source.clip != null)
+                {
+                    string clipName = source.clip.name.ToLower();
+                    
+                    // Classify as music if clip name contains music-related terms
+                    if (clipName.Contains("music") || clipName.Contains("theme") || 
+                        clipName.Contains("canon") || clipName.Contains("three_little") ||
+                        source.loop) // Looping audio is usually background music
+                    {
+                        musicSources.Add(source);
+                        Debug.Log($"🎵 Found music AudioSource: {source.gameObject.name} - {clipName}");
+                    }
+                    else
+                    {
+                        // Everything else is SFX
+                        sfxSources.Add(source);
+                        Debug.Log($"🔊 Found SFX AudioSource: {source.gameObject.name} - {clipName}");
+                    }
+                }
+                else
+                {
+                    // No clip assigned, assume SFX
+                    sfxSources.Add(source);
+                    Debug.Log($"🔊 Found unassigned AudioSource (SFX): {source.gameObject.name}");
+                }
+            }
+            
+            musicAudioSources = musicSources.ToArray();
+            sfxAudioSources = sfxSources.ToArray();
+            
+            Debug.Log($"Auto-found {musicAudioSources.Length} music sources and {sfxAudioSources.Length} SFX sources");
         }
     }
     
@@ -171,6 +408,8 @@ public class SettingsManager : MonoBehaviour
         Debug.Log($"Close Button: {(closeButton != null ? "✓" : "✗")}");
         Debug.Log($"Main Menu Button: {(mainMenuButton != null ? "✓" : "✗")}");
         Debug.Log($"Audio Mixer: {(audioMixer != null ? "✓" : "✗")}");
+        Debug.Log($"Music AudioSources: {(musicAudioSources != null ? musicAudioSources.Length.ToString() : "0")}");
+        Debug.Log($"SFX AudioSources: {(sfxAudioSources != null ? sfxAudioSources.Length.ToString() : "0")}");
         Debug.Log("=== END VALIDATION ===");
     }
     
@@ -211,7 +450,18 @@ public class SettingsManager : MonoBehaviour
     
     private void SetupResolutions()
     {
-        resolutions = Screen.resolutions;
+        // Use GraphicsSettingsManager if available
+        GraphicsSettingsManager graphicsManager = GraphicsSettingsManager.Instance;
+        if (graphicsManager != null)
+        {
+            resolutions = graphicsManager.GetAvailableResolutions();
+        }
+        else
+        {
+            // Fallback: Use Screen.resolutions
+            resolutions = Screen.resolutions;
+        }
+        
         if (resolutionDropdown != null)
         {
             resolutionDropdown.ClearOptions();
@@ -247,32 +497,44 @@ public class SettingsManager : MonoBehaviour
         {
             qualityDropdown.ClearOptions();
             
-            // Check the number of available quality levels
-            if (QualitySettings.names.Length > 1)
+            // Use GraphicsSettingsManager if available
+            GraphicsSettingsManager graphicsManager = GraphicsSettingsManager.Instance;
+            if (graphicsManager != null)
             {
-                qualityDropdown.AddOptions(new List<string>(QualitySettings.names));
-                qualityDropdown.value = QualitySettings.GetQualityLevel();
+                string[] qualityNames = graphicsManager.GetQualityNames();
+                qualityDropdown.AddOptions(new List<string>(qualityNames));
+                qualityDropdown.value = graphicsManager.GetCurrentQualityLevel();
+                Debug.Log($"Setup {qualityNames.Length} quality options from GraphicsSettingsManager");
             }
             else
             {
-                Debug.LogWarning("Only 1 quality level found! Consider adding more quality levels in Project Settings > Quality");
-                Debug.LogWarning("Go to Edit > Project Settings > Quality to add more quality levels");
+                // Fallback: Check the number of available quality levels
+                if (QualitySettings.names.Length > 1)
+                {
+                    qualityDropdown.AddOptions(new List<string>(QualitySettings.names));
+                    qualityDropdown.value = QualitySettings.GetQualityLevel();
+                }
+                else
+                {
+                    Debug.LogWarning("Only 1 quality level found! Consider adding more quality levels in Project Settings > Quality");
+                    Debug.LogWarning("Go to Edit > Project Settings > Quality to add more quality levels");
+                    
+                    // Create basic options if there are none
+                    List<string> fallbackOptions = new List<string> { "Low", "Medium", "High" };
+                    qualityDropdown.AddOptions(fallbackOptions);
+                    qualityDropdown.value = 0;
+                }
                 
-                // Create basic options if there are none
-                List<string> fallbackOptions = new List<string> { "Low", "Medium", "High" };
-                qualityDropdown.AddOptions(fallbackOptions);
-                qualityDropdown.value = 0;
+                Debug.Log($"Setup {QualitySettings.names.Length} quality options from Unity Quality Settings");
+                
+                // Output available quality levels
+                for (int i = 0; i < QualitySettings.names.Length; i++)
+                {
+                    Debug.Log($"  Quality Level {i}: {QualitySettings.names[i]}");
+                }
             }
             
             qualityDropdown.RefreshShownValue();
-            
-            Debug.Log($"Setup {QualitySettings.names.Length} quality options from Unity Quality Settings");
-            
-            // Output available quality levels
-            for (int i = 0; i < QualitySettings.names.Length; i++)
-            {
-                Debug.Log($"  Quality Level {i}: {QualitySettings.names[i]}");
-            }
         }
         else
         {
@@ -333,7 +595,15 @@ public class SettingsManager : MonoBehaviour
     
     public void OnQualityChanged(int qualityIndex)
     {
-        // If we only have one quality level in Unity, but dropdown has more options
+        // Use GraphicsSettingsManager if available
+        GraphicsSettingsManager graphicsManager = GraphicsSettingsManager.Instance;
+        if (graphicsManager != null)
+        {
+            graphicsManager.SetQualityLevel(qualityIndex);
+            return;
+        }
+        
+        // Fallback: If we only have one quality level in Unity, but dropdown has more options
         if (QualitySettings.names.Length == 1 && qualityDropdown.options.Count > 1)
         {
             Debug.LogWarning($"Trying to set quality to index {qualityIndex}, but Unity only has {QualitySettings.names.Length} quality level(s)");
@@ -343,7 +613,7 @@ public class SettingsManager : MonoBehaviour
             SimulateQualityChange(qualityIndex);
             return;
         }
-        
+
         if (qualityIndex >= 0 && qualityIndex < QualitySettings.names.Length)
         {
             QualitySettings.SetQualityLevel(qualityIndex);
@@ -367,8 +637,8 @@ public class SettingsManager : MonoBehaviour
         switch (qualityIndex)
         {
             case 0: // Low Quality
-                QualitySettings.shadowResolution = ShadowResolution.Low;
-                QualitySettings.shadows = ShadowQuality.HardOnly;
+                QualitySettings.shadowResolution = UnityEngine.ShadowResolution.Low;
+                QualitySettings.shadows = UnityEngine.ShadowQuality.HardOnly;
                 QualitySettings.antiAliasing = 0;
                 QualitySettings.anisotropicFiltering = AnisotropicFiltering.Disable;
                 QualitySettings.vSyncCount = 0;
@@ -376,8 +646,8 @@ public class SettingsManager : MonoBehaviour
                 break;
                 
             case 1: // Medium Quality
-                QualitySettings.shadowResolution = ShadowResolution.Medium;
-                QualitySettings.shadows = ShadowQuality.All;
+                QualitySettings.shadowResolution = UnityEngine.ShadowResolution.Medium;
+                QualitySettings.shadows = UnityEngine.ShadowQuality.All;
                 QualitySettings.antiAliasing = 2;
                 QualitySettings.anisotropicFiltering = AnisotropicFiltering.Enable;
                 QualitySettings.vSyncCount = 0;
@@ -385,8 +655,8 @@ public class SettingsManager : MonoBehaviour
                 break;
                 
             case 2: // High Quality
-                QualitySettings.shadowResolution = ShadowResolution.High;
-                QualitySettings.shadows = ShadowQuality.All;
+                QualitySettings.shadowResolution = UnityEngine.ShadowResolution.High;
+                QualitySettings.shadows = UnityEngine.ShadowQuality.All;
                 QualitySettings.antiAliasing = 4;
                 QualitySettings.anisotropicFiltering = AnisotropicFiltering.ForceEnable;
                 QualitySettings.vSyncCount = 1;
@@ -404,6 +674,16 @@ public class SettingsManager : MonoBehaviour
     
     public void OnResolutionChanged(int resolutionIndex)
     {
+        // Use GraphicsSettingsManager if available
+        GraphicsSettingsManager graphicsManager = GraphicsSettingsManager.Instance;
+        if (graphicsManager != null)
+        {
+            bool isFullscreen = fullscreenToggle != null ? fullscreenToggle.isOn : Screen.fullScreen;
+            graphicsManager.SetResolution(resolutionIndex, isFullscreen);
+            return;
+        }
+        
+        // Fallback: Use original logic
         if (resolutions != null && resolutionIndex >= 0 && resolutionIndex < resolutions.Length)
         {
             Resolution resolution = resolutions[resolutionIndex];
@@ -425,6 +705,15 @@ public class SettingsManager : MonoBehaviour
     
     public void OnFullscreenChanged(bool isFullscreen)
     {
+        // Use GraphicsSettingsManager if available
+        GraphicsSettingsManager graphicsManager = GraphicsSettingsManager.Instance;
+        if (graphicsManager != null)
+        {
+            graphicsManager.SetFullscreen(isFullscreen);
+            return;
+        }
+        
+        // Fallback: Use original logic
         Screen.fullScreen = isFullscreen;
         Debug.Log($"Fullscreen changed to: {isFullscreen}");
         
@@ -442,20 +731,92 @@ public class SettingsManager : MonoBehaviour
     
     public void OnMasterVolumeChanged(float volume)
     {
+        // Use AudioManager if available
+        AudioManager audioManager = AudioManager.Instance;
+        if (audioManager != null)
+        {
+            audioManager.SetMasterVolume(volume);
+            return;
+        }
+        
+        // Fallback: Use AudioMixer if available
         if (audioMixer != null)
-            audioMixer.SetFloat("MasterVolume", Mathf.Log10(volume) * 20);
+        {
+            float dbValue = volume > 0.0001f ? Mathf.Log10(volume) * 20 : -80f;
+            audioMixer.SetFloat("MasterVolume", dbValue);
+        }
+        else
+        {
+            // Last resort: adjust AudioListener volume
+            AudioListener.volume = volume;
+            Debug.Log($"🔊 Master volume set to {volume} via AudioListener");
+        }
     }
     
     public void OnMusicVolumeChanged(float volume)
     {
+        // Use AudioManager if available
+        AudioManager audioManager = AudioManager.Instance;
+        if (audioManager != null)
+        {
+            audioManager.SetMusicVolume(volume);
+            return;
+        }
+        
+        // Fallback: Use AudioMixer if available
         if (audioMixer != null)
-            audioMixer.SetFloat("MusicVolume", Mathf.Log10(volume) * 20);
+        {
+            float dbValue = volume > 0.0001f ? Mathf.Log10(volume) * 20 : -80f;
+            audioMixer.SetFloat("MusicVolume", dbValue);
+        }
+        else
+        {
+            // Last resort: adjust music AudioSources directly
+            if (musicAudioSources != null)
+            {
+                foreach (AudioSource source in musicAudioSources)
+                {
+                    if (source != null)
+                    {
+                        source.volume = volume;
+                    }
+                }
+                Debug.Log($"🎵 Music volume set to {volume} for {musicAudioSources.Length} sources");
+            }
+        }
     }
     
     public void OnSFXVolumeChanged(float volume)
     {
+        // Use AudioManager if available
+        AudioManager audioManager = AudioManager.Instance;
+        if (audioManager != null)
+        {
+            audioManager.SetSFXVolume(volume);
+            return;
+        }
+        
+        // Fallback: Use AudioMixer if available
         if (audioMixer != null)
-            audioMixer.SetFloat("SFXVolume", Mathf.Log10(volume) * 20);
+        {
+            float dbValue = volume > 0.0001f ? Mathf.Log10(volume) * 20 : -80f;
+            audioMixer.SetFloat("SFXVolume", dbValue);
+        }
+        else
+        {
+            // Last resort: adjust SFX AudioSources directly
+            if (sfxAudioSources != null)
+            {
+                foreach (AudioSource source in sfxAudioSources)
+                {
+                    if (source != null)
+                    {
+                        source.volume = volume;
+                    }
+                }
+                Debug.Log($"🔊 SFX volume set to {volume} for {sfxAudioSources.Length} sources");
+            }
+        }
     }
     
     public void ApplySettings()
@@ -491,23 +852,45 @@ public class SettingsManager : MonoBehaviour
             Debug.Log($"Applied Fullscreen: {fullscreen}");
         }
         
-        // Save audio settings
-        if (masterVolumeSlider != null)
+        // Save audio settings using AudioManager
+        AudioManager audioManager = AudioManager.Instance;
+        if (audioManager != null)
         {
-            PlayerPrefs.SetFloat("MasterVolume", masterVolumeSlider.value);
-            OnMasterVolumeChanged(masterVolumeSlider.value);
+            if (masterVolumeSlider != null)
+            {
+                audioManager.masterVolume = masterVolumeSlider.value;
+            }
+            if (musicVolumeSlider != null)
+            {
+                audioManager.musicVolume = musicVolumeSlider.value;
+            }
+            if (sfxVolumeSlider != null)
+            {
+                audioManager.sfxVolume = sfxVolumeSlider.value;
+            }
+            audioManager.SaveSettings();
+            audioManager.ApplyAllSettings();
         }
-        
-        if (musicVolumeSlider != null)
+        else
         {
-            PlayerPrefs.SetFloat("MusicVolume", musicVolumeSlider.value);
-            OnMusicVolumeChanged(musicVolumeSlider.value);
-        }
-        
-        if (sfxVolumeSlider != null)
-        {
-            PlayerPrefs.SetFloat("SFXVolume", sfxVolumeSlider.value);
-            OnSFXVolumeChanged(sfxVolumeSlider.value);
+            // Fallback: Save audio settings manually
+            if (masterVolumeSlider != null)
+            {
+                PlayerPrefs.SetFloat("MasterVolume", masterVolumeSlider.value);
+                OnMasterVolumeChanged(masterVolumeSlider.value);
+            }
+            
+            if (musicVolumeSlider != null)
+            {
+                PlayerPrefs.SetFloat("MusicVolume", musicVolumeSlider.value);
+                OnMusicVolumeChanged(musicVolumeSlider.value);
+            }
+            
+            if (sfxVolumeSlider != null)
+            {
+                PlayerPrefs.SetFloat("SFXVolume", sfxVolumeSlider.value);
+                OnSFXVolumeChanged(sfxVolumeSlider.value);
+            }
         }
         
         PlayerPrefs.Save();
