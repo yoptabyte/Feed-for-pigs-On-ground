@@ -10,37 +10,47 @@ public class GameStatsTracker : MonoBehaviour
     [Header("Statistics")]
     [SerializeField] private float maxSpeedReached = 0f;
     [SerializeField] private int totalItemsEaten = 0;
+    [SerializeField] private float gameTime = 0f;
     [SerializeField] private Dictionary<string, int> itemsEatenByType = new Dictionary<string, int>();
     
     [Header("UI References - Auto Find")]
-    [Tooltip("Text компонент для отображения максимальной скорости")]
+    [Tooltip("Text component for displaying max speed")]
     public Text maxSpeedText;
     
-    [Tooltip("TextMeshPro компонент для отображения максимальной скорости")]
+    [Tooltip("TextMeshPro component for displaying max speed")]
     public TextMeshProUGUI maxSpeedTextTMP;
     
-    [Tooltip("Text компонент для отображения количества съеденных предметов")]
+    [Tooltip("Text component for displaying number of eaten items")]
     public Text itemsEatenText;
     
-    [Tooltip("TextMeshPro компонент для отображения количества съеденных предметов")]
+    [Tooltip("TextMeshPro component for displaying number of eaten items")]
     public TextMeshProUGUI itemsEatenTextTMP;
     
+    [Tooltip("Text component for displaying game time")]
+    public Text gameTimeText;
+    
+    [Tooltip("TextMeshPro component for displaying game time")]
+    public TextMeshProUGUI gameTimeTextTMP;
+    
     [Header("Display Settings")]
-    [Tooltip("Формат отображения скорости")]
-    public string speedFormat = "Макс. скорость: {0:F1}";
+    [Tooltip("Speed display format")]
+    public string speedFormat = "Max speed: {0:F1}";
     
-    [Tooltip("Формат отображения предметов")]
-    public string itemsFormat = "Съедено предметов: {0}";
+    [Tooltip("Items display format")]
+    public string itemsFormat = "Eaten food: {0}";
     
-    [Tooltip("Скрывать статистику в начале игры")]
+    [Tooltip("Time display format")]
+    public string timeFormat = "Time: {0}";
+    
+    [Tooltip("Hide statistics at start")]
     public bool hideStatsAtStart = true;
     
     [Header("Auto Find Settings")]
-    [Tooltip("Автопоиск UI компонентов")]
+    [Tooltip("Auto find UI components")]
     public bool autoFindUIComponents = true;
     
     [Header("Debug")]
-    [Tooltip("Показывать отладочную информацию")]
+    [Tooltip("Show debug information")]
     public bool showDebugInfo = false;
     
     void Awake()
@@ -53,14 +63,14 @@ public class GameStatsTracker : MonoBehaviour
             
             if (showDebugInfo)
             {
-                Debug.Log("GameStatsTracker: Singleton создан");
+                Debug.Log("GameStatsTracker: Singleton created");
             }
         }
         else
         {
             if (showDebugInfo)
             {
-                Debug.Log("GameStatsTracker: Дублированный экземпляр уничтожен");
+                Debug.Log("GameStatsTracker: Duplicate instance destroyed");
             }
             Destroy(gameObject);
         }
@@ -87,7 +97,7 @@ public class GameStatsTracker : MonoBehaviour
     {
         if (showDebugInfo)
         {
-            Debug.Log("GameStatsTracker: Автопоиск UI компонентов...");
+            Debug.Log("GameStatsTracker: Auto find UI components...");
         }
         
         // Find all Text components in scene
@@ -100,12 +110,12 @@ public class GameStatsTracker : MonoBehaviour
             foreach (Text text in allTexts)
             {
                 string name = text.name.ToLower();
-                if (name.Contains("speed") || name.Contains("скорость") || name.Contains("max"))
+                if (name.Contains("speed") || name.Contains("velocity") || name.Contains("max"))
                 {
                     maxSpeedText = text;
                     if (showDebugInfo)
                     {
-                        Debug.Log($"GameStatsTracker: Найден Speed Text: {text.name}");
+                        Debug.Log($"GameStatsTracker: Found Speed Text: {text.name}");
                     }
                     break;
                 }
@@ -118,12 +128,12 @@ public class GameStatsTracker : MonoBehaviour
             foreach (TextMeshProUGUI textTMP in allTextsTMP)
             {
                 string name = textTMP.name.ToLower();
-                if (name.Contains("speed") || name.Contains("скорость") || name.Contains("max"))
+                if (name.Contains("speed") || name.Contains("velocity") || name.Contains("max"))
                 {
                     maxSpeedTextTMP = textTMP;
                     if (showDebugInfo)
                     {
-                        Debug.Log($"GameStatsTracker: Найден Speed TextMeshPro: {textTMP.name}");
+                        Debug.Log($"GameStatsTracker: Found Speed TextMeshPro: {textTMP.name}");
                     }
                     break;
                 }
@@ -136,12 +146,12 @@ public class GameStatsTracker : MonoBehaviour
             foreach (Text text in allTexts)
             {
                 string name = text.name.ToLower();
-                if (name.Contains("item") || name.Contains("предмет") || name.Contains("съед") || name.Contains("eaten"))
+                if (name.Contains("item") || name.Contains("eaten") || name.Contains("food"))
                 {
                     itemsEatenText = text;
                     if (showDebugInfo)
                     {
-                        Debug.Log($"GameStatsTracker: Найден Items Text: {text.name}");
+                        Debug.Log($"GameStatsTracker: Found Items Text: {text.name}");
                     }
                     break;
                 }
@@ -154,16 +164,69 @@ public class GameStatsTracker : MonoBehaviour
             foreach (TextMeshProUGUI textTMP in allTextsTMP)
             {
                 string name = textTMP.name.ToLower();
-                if (name.Contains("item") || name.Contains("предмет") || name.Contains("съед") || name.Contains("eaten"))
+                if (name.Contains("item") || name.Contains("eaten") || name.Contains("food"))
                 {
                     itemsEatenTextTMP = textTMP;
                     if (showDebugInfo)
                     {
-                        Debug.Log($"GameStatsTracker: Найден Items TextMeshPro: {textTMP.name}");
+                        Debug.Log($"GameStatsTracker: Found Items TextMeshPro: {textTMP.name}");
                     }
                     break;
                 }
             }
+        }
+        
+        // Try to find time text (regular Text)
+        if (gameTimeText == null)
+        {
+            foreach (Text text in allTexts)
+            {
+                string name = text.name.ToLower();
+                if (name.Contains("time") || name.Contains("timer") || name.Contains("duration"))
+                {
+                    gameTimeText = text;
+                    if (showDebugInfo)
+                    {
+                        Debug.Log($"GameStatsTracker: Found Time Text: {text.name}");
+                    }
+                    break;
+                }
+            }
+        }
+        
+        // Try to find time text (TextMeshPro)
+        if (gameTimeTextTMP == null)
+        {
+            foreach (TextMeshProUGUI textTMP in allTextsTMP)
+            {
+                string name = textTMP.name.ToLower();
+                if (name.Contains("time") || name.Contains("timer") || name.Contains("duration"))
+                {
+                    gameTimeTextTMP = textTMP;
+                    if (showDebugInfo)
+                    {
+                        Debug.Log($"GameStatsTracker: Found Time TextMeshPro: {textTMP.name}");
+                    }
+                    break;
+                }
+            }
+        }
+    }
+    
+    // Method to set game time
+    public void SetGameTime(float timeInSeconds)
+    {
+        gameTime = timeInSeconds;
+        
+        if (showDebugInfo)
+        {
+            Debug.Log($"GameStatsTracker: Game time set to: {FormatTime(gameTime)}");
+        }
+        
+        // Only update UI if statistics are currently visible
+        if (!hideStatsAtStart || AreStatisticsVisible())
+        {
+            UpdateTimeUI();
         }
     }
     
@@ -176,7 +239,7 @@ public class GameStatsTracker : MonoBehaviour
             
             if (showDebugInfo)
             {
-                Debug.Log($"GameStatsTracker: Новая максимальная скорость: {maxSpeedReached:F1}");
+                Debug.Log($"GameStatsTracker: New max speed: {maxSpeedReached:F1}");
             }
             
             // Only update UI if statistics are currently visible
@@ -204,7 +267,7 @@ public class GameStatsTracker : MonoBehaviour
         
         if (showDebugInfo)
         {
-            Debug.Log($"GameStatsTracker: Добавлен предмет '{itemName}'. Всего: {totalItemsEaten}");
+            Debug.Log($"GameStatsTracker: Added item '{itemName}'. Total: {totalItemsEaten}");
         }
         
         // Only update UI if statistics are currently visible
@@ -227,6 +290,10 @@ public class GameStatsTracker : MonoBehaviour
             visible = true;
         if (itemsEatenTextTMP != null && itemsEatenTextTMP.gameObject.activeInHierarchy)
             visible = true;
+        if (gameTimeText != null && gameTimeText.gameObject.activeInHierarchy)
+            visible = true;
+        if (gameTimeTextTMP != null && gameTimeTextTMP.gameObject.activeInHierarchy)
+            visible = true;
             
         return visible;
     }
@@ -239,7 +306,75 @@ public class GameStatsTracker : MonoBehaviour
         
         if (showDebugInfo)
         {
-            Debug.Log("GameStatsTracker: Статистика показана");
+            Debug.Log("GameStatsTracker: Statistics shown");
+            Debug.Log($"GameStatsTracker: Max Speed: {maxSpeedReached:F1}");
+            Debug.Log($"GameStatsTracker: Items Eaten: {totalItemsEaten}");
+            Debug.Log($"GameStatsTracker: Game Time: {FormatTime(gameTime)}");
+        }
+    }
+    
+    // Force show statistics with current data (for finish screen)
+    public void ForceShowStatistics()
+    {
+        // Auto find UI components if not found
+        if (autoFindUIComponents)
+        {
+            AutoFindUIComponents();
+        }
+        
+        // Force visibility
+        SetStatisticsVisibility(true);
+        
+        // Update with current data
+        UpdateUI();
+        
+        // Also try to update finish screen specific elements
+        UpdateFinishScreenStatistics();
+        
+        if (showDebugInfo)
+        {
+            Debug.Log("GameStatsTracker: Statistics force shown");
+            Debug.Log($"GameStatsTracker: Max Speed: {maxSpeedReached:F1}");
+            Debug.Log($"GameStatsTracker: Items Eaten: {totalItemsEaten}");
+            Debug.Log($"GameStatsTracker: Game Time: {FormatTime(gameTime)}");
+        }
+    }
+    
+    // Update finish screen specific statistics
+    private void UpdateFinishScreenStatistics()
+    {
+        // Try to find finish screen specific text elements
+        GameObject finishUI = GameObject.Find("FinishUI");
+        if (finishUI != null)
+        {
+            // Update max speed in finish screen
+            Transform speedTextTransform = finishUI.transform.Find("MaxSpeedText");
+            if (speedTextTransform != null)
+            {
+                TextMeshProUGUI speedText = speedTextTransform.GetComponent<TextMeshProUGUI>();
+                if (speedText != null)
+                {
+                    speedText.text = $"Max speed: {maxSpeedReached:F1}";
+                    speedText.gameObject.SetActive(true);
+                }
+            }
+            
+            // Update items eaten in finish screen
+            Transform itemsTextTransform = finishUI.transform.Find("ItemsEatenText");
+            if (itemsTextTransform != null)
+            {
+                TextMeshProUGUI itemsText = itemsTextTransform.GetComponent<TextMeshProUGUI>();
+                if (itemsText != null)
+                {
+                    itemsText.text = $"Collected items: {totalItemsEaten}";
+                    itemsText.gameObject.SetActive(true);
+                }
+            }
+            
+            if (showDebugInfo)
+            {
+                Debug.Log("GameStatsTracker: Finish screen statistics updated");
+            }
         }
     }
     
@@ -250,7 +385,7 @@ public class GameStatsTracker : MonoBehaviour
         
         if (showDebugInfo)
         {
-            Debug.Log("GameStatsTracker: Статистика скрыта");
+            Debug.Log("GameStatsTracker: Statistics hidden");
         }
     }
     
@@ -264,6 +399,10 @@ public class GameStatsTracker : MonoBehaviour
             itemsEatenText.gameObject.SetActive(visible);
         if (itemsEatenTextTMP != null)
             itemsEatenTextTMP.gameObject.SetActive(visible);
+        if (gameTimeText != null)
+            gameTimeText.gameObject.SetActive(visible);
+        if (gameTimeTextTMP != null)
+            gameTimeTextTMP.gameObject.SetActive(visible);
     }
     
     // Update UI methods
@@ -297,15 +436,41 @@ public class GameStatsTracker : MonoBehaviour
         }
     }
     
+    private void UpdateTimeUI()
+    {
+        string timeText = string.Format(timeFormat, FormatTime(gameTime));
+        
+        if (gameTimeText != null)
+        {
+            gameTimeText.text = timeText;
+        }
+        
+        if (gameTimeTextTMP != null)
+        {
+            gameTimeTextTMP.text = timeText;
+        }
+    }
+    
+    private string FormatTime(float timeInSeconds)
+    {
+        int minutes = Mathf.FloorToInt(timeInSeconds / 60f);
+        int seconds = Mathf.FloorToInt(timeInSeconds % 60f);
+        int milliseconds = Mathf.FloorToInt((timeInSeconds * 1000f) % 1000f);
+        
+        return $"{minutes:00}:{seconds:00}.{milliseconds:000}";
+    }
+    
     public void UpdateUI()
     {
         UpdateSpeedUI();
         UpdateItemsUI();
+        UpdateTimeUI();
     }
     
     // Public getters
     public float MaxSpeedReached => maxSpeedReached;
     public int TotalItemsEaten => totalItemsEaten;
+    public float GameTime => gameTime;
     public Dictionary<string, int> ItemsEatenByType => new Dictionary<string, int>(itemsEatenByType);
     
     // Reset methods
@@ -313,13 +478,14 @@ public class GameStatsTracker : MonoBehaviour
     {
         maxSpeedReached = 0f;
         totalItemsEaten = 0;
+        gameTime = 0f;
         itemsEatenByType.Clear();
         
         UpdateUI();
         
         if (showDebugInfo)
         {
-            Debug.Log("GameStatsTracker: Статистика сброшена");
+            Debug.Log("GameStatsTracker: Statistics reset");
         }
     }
     

@@ -6,91 +6,91 @@ using System.Collections;
 public class AdvancedDeathController : MonoBehaviour
 {
     [Header("Death UI Settings")]
-    [Tooltip("UI изображение AllPigs для показа при смерти")]
+    [Tooltip("AllPigs UI image to show on death")]
     public GameObject allPigsImage;
     
-    [Tooltip("Кнопка выхода в главное меню")]
+    [Tooltip("Main menu button")]
     public Button mainMenuButton;
     
-    [Tooltip("Компонент Health свиньи/игрока")]
+    [Tooltip("Player/pig Health component")]
     public Health playerHealth;
     
     [Header("Audio Settings")]
-    [Tooltip("AudioSource для проигрывания музыки смерти")]
+    [Tooltip("AudioSource for playing death music")]
     public AudioSource deathAudioSource;
     
-    [Tooltip("Аудиоклип для проигрывания при смерти")]
+    [Tooltip("Audio clip to play on death")]
     public AudioClip deathMusicClip;
     
-    [Tooltip("Громкость музыки смерти")]
+    [Tooltip("Death music volume")]
     [Range(0f, 1f)]
     public float deathMusicVolume = 0.8f;
     
     [Header("Statistics UI")]
-    [Tooltip("Text для отображения максимальной скорости")]
+    [Tooltip("Text component for displaying maximum speed")]
     public Text maxSpeedText;
     
-    [Tooltip("TextMeshPro для отображения максимальной скорости")]
+    [Tooltip("TextMeshPro component for displaying maximum speed")]
     public TextMeshProUGUI maxSpeedTextTMP;
     
-    [Tooltip("Text для отображения количества съеденных предметов")]
+    [Tooltip("Text component for displaying number of eaten items")]
     public Text itemsEatenText;
     
-    [Tooltip("TextMeshPro для отображения количества съеденных предметов")]
+    [Tooltip("TextMeshPro component for displaying number of eaten items")]
     public TextMeshProUGUI itemsEatenTextTMP;
     
     [Header("System Control")]
-    [Tooltip("Остановить MovementSystem при смерти")]
+    [Tooltip("Stop MovementSystem on death")]
     public bool stopMovementSystem = true;
     
-    [Tooltip("Остановить PlayerInputSystem при смерти")]
+    [Tooltip("Stop PlayerInputSystem on death")]
     public bool stopPlayerInput = true;
     
-    [Tooltip("Остановить Rigidbody при смерти")]
+    [Tooltip("Stop Rigidbody on death")]
     public bool stopRigidbody = true;
     
-    [Tooltip("Остановить CameraSwitcher при смерти")]
+    [Tooltip("Stop CameraSwitcher on death")]
     public bool stopCameraSwitcher = true;
     
     [Header("Auto Find Settings")]
-    [Tooltip("Автоматически найти компоненты при старте")]
+    [Tooltip("Automatically find components on start")]
     public bool autoFindComponents = true;
     
     [Header("Debug")]
-    [Tooltip("Показывать отладочную информацию")]
+    [Tooltip("Show debug information")]
     public bool showDebugInfo = false;
     
     [Header("Death Timing")]
-    [Tooltip("Задержка в секундах перед показом статистики и удалением AllPigs")]
+    [Tooltip("Delay in seconds before showing statistics and removing AllPigs")]
     public float deathDelaySeconds = 4f;
     
     [Header("Main Menu Settings")]
-    [Tooltip("Название сцены главного меню")]
+    [Tooltip("Main menu scene name")]
     public string mainMenuSceneName = "MainMenu";
     
-    [Tooltip("Показывать кнопку главного меню при смерти")]
+    [Tooltip("Show main menu button on death")]
     public bool showMainMenuButton = true;
     
-    [Tooltip("Создать кнопку главного меню если не найдена")]
+    [Tooltip("Create main menu button if not found")]
     public bool createMainMenuButton = true;
     
-    [Tooltip("Позиция кнопки главного меню на экране")]
+    [Tooltip("Main menu button position on screen")]
     public Vector2 mainMenuButtonPosition = new Vector2(0, -100);
     
-    [Tooltip("Размер кнопки главного меню")]
+    [Tooltip("Main menu button size")]
     public Vector2 mainMenuButtonSize = new Vector2(200, 50);
     
-    [Tooltip("Текст кнопки главного меню")]
-    public string mainMenuButtonText = "Главное меню";
+    [Tooltip("Main menu button text")]
+    public string mainMenuButtonText = "Main Menu";
     
-    [Tooltip("Использовать TextMeshPro для кнопки")]
+    [Tooltip("Use TextMeshPro for button")]
     public bool useTextMeshProForButton = true;
     
     [Header("Cursor Settings")]
-    [Tooltip("Включить курсор при смерти")]
+    [Tooltip("Enable cursor on death")]
     public bool enableCursorOnDeath = true;
     
-    [Tooltip("Разблокировать курсор при смерти")]
+    [Tooltip("Unlock cursor on death")]
     public bool unlockCursorOnDeath = true;
     
     // Private variables
@@ -126,7 +126,7 @@ public class AdvancedDeathController : MonoBehaviour
     {
         if (showDebugInfo)
         {
-            Debug.Log("AdvancedDeathController: Автопоиск компонентов...");
+            Debug.Log("AdvancedDeathController: Auto-finding components...");
         }
         
         // Find AllPigs image
@@ -137,12 +137,12 @@ public class AdvancedDeathController : MonoBehaviour
             {
                 if (showDebugInfo)
                 {
-                    Debug.Log($"AdvancedDeathController: Найден AllPigs: {allPigsImage.name}");
+                    Debug.Log($"AdvancedDeathController: Found AllPigs: {allPigsImage.name}");
                 }
             }
             else
             {
-                Debug.LogWarning("AdvancedDeathController: AllPigs изображение не найдено!");
+                Debug.LogWarning("AdvancedDeathController: AllPigs image not found!");
             }
         }
         
@@ -164,13 +164,13 @@ public class AdvancedDeathController : MonoBehaviour
                 foreach (Health health in allHealthComponents)
                 {
                     string name = health.gameObject.name.ToLower();
-                    if (name.Contains("pig") || name.Contains("player") || name.Contains("свин"))
+                    if (name.Contains("pig") || name.Contains("player"))
                     {
                         playerHealth = health;
                         playerObject = health.gameObject;
                         if (showDebugInfo)
                         {
-                            Debug.Log($"AdvancedDeathController: Найден Health компонент: {health.gameObject.name}");
+                            Debug.Log($"AdvancedDeathController: Found Health component: {health.gameObject.name}");
                         }
                         break;
                     }
@@ -200,7 +200,7 @@ public class AdvancedDeathController : MonoBehaviour
                 deathAudioSource = gameObject.AddComponent<AudioSource>();
                 if (showDebugInfo)
                 {
-                    Debug.Log("AdvancedDeathController: Создан новый AudioSource");
+                    Debug.Log("AdvancedDeathController: Created new AudioSource");
                 }
             }
         }
@@ -213,7 +213,7 @@ public class AdvancedDeathController : MonoBehaviour
             {
                 if (showDebugInfo)
                 {
-                    Debug.Log($"AdvancedDeathController: Найдена кнопка главного меню: {mainMenuButton.name}");
+                    Debug.Log($"AdvancedDeathController: Found main menu button: {mainMenuButton.name}");
                 }
             }
             else if (createMainMenuButton)
@@ -222,7 +222,7 @@ public class AdvancedDeathController : MonoBehaviour
             }
             else
             {
-                Debug.LogWarning("AdvancedDeathController: Кнопка главного меню не найдена и автосоздание отключено!");
+                Debug.LogWarning("AdvancedDeathController: Main menu button not found and auto-creation is disabled!");
             }
         }
     }
@@ -235,14 +235,14 @@ public class AdvancedDeathController : MonoBehaviour
         movementSystem = FindObjectOfType<MovementSystem>();
         if (movementSystem != null && showDebugInfo)
         {
-            Debug.Log($"AdvancedDeathController: Найден MovementSystem: {movementSystem.name}");
+            Debug.Log($"AdvancedDeathController: Found MovementSystem: {movementSystem.name}");
         }
         
         // Find PlayerInputSystem
         playerInputSystem = FindObjectOfType<PlayerInputSystem>();
         if (playerInputSystem != null && showDebugInfo)
         {
-            Debug.Log($"AdvancedDeathController: Найден PlayerInputSystem: {playerInputSystem.name}");
+            Debug.Log($"AdvancedDeathController: Found PlayerInputSystem: {playerInputSystem.name}");
         }
         
         // Find Rigidbody on player
@@ -253,14 +253,14 @@ public class AdvancedDeathController : MonoBehaviour
         }
         if (playerRigidbody != null && showDebugInfo)
         {
-            Debug.Log($"AdvancedDeathController: Найден Rigidbody: {playerRigidbody.name}");
+            Debug.Log($"AdvancedDeathController: Found Rigidbody: {playerRigidbody.name}");
         }
         
         // Find CameraSwitcher
         cameraSwitcher = FindObjectOfType<CameraSwitcher>();
         if (cameraSwitcher != null && showDebugInfo)
         {
-            Debug.Log($"AdvancedDeathController: Найден CameraSwitcher: {cameraSwitcher.name}");
+            Debug.Log($"AdvancedDeathController: Found CameraSwitcher: {cameraSwitcher.name}");
         }
     }
     
@@ -276,12 +276,12 @@ public class AdvancedDeathController : MonoBehaviour
             foreach (Text text in allTexts)
             {
                 string name = text.name.ToLower();
-                if (name.Contains("speed") || name.Contains("скорость") || name.Contains("max"))
+                if (name.Contains("speed") || name.Contains("max"))
                 {
                     maxSpeedText = text;
                     if (showDebugInfo)
                     {
-                        Debug.Log($"AdvancedDeathController: Найден Speed Text: {text.name}");
+                        Debug.Log($"AdvancedDeathController: Found Speed Text: {text.name}");
                     }
                     break;
                 }
@@ -294,12 +294,12 @@ public class AdvancedDeathController : MonoBehaviour
             foreach (TextMeshProUGUI textTMP in allTextsTMP)
             {
                 string name = textTMP.name.ToLower();
-                if (name.Contains("speed") || name.Contains("скорость") || name.Contains("max"))
+                if (name.Contains("speed") || name.Contains("max"))
                 {
                     maxSpeedTextTMP = textTMP;
                     if (showDebugInfo)
                     {
-                        Debug.Log($"AdvancedDeathController: Найден Speed TextMeshPro: {textTMP.name}");
+                        Debug.Log($"AdvancedDeathController: Found Speed TextMeshPro: {textTMP.name}");
                     }
                     break;
                 }
@@ -312,12 +312,12 @@ public class AdvancedDeathController : MonoBehaviour
             foreach (Text text in allTexts)
             {
                 string name = text.name.ToLower();
-                if (name.Contains("item") || name.Contains("предмет") || name.Contains("съед") || name.Contains("eaten"))
+                if (name.Contains("item") || name.Contains("eaten"))
                 {
                     itemsEatenText = text;
                     if (showDebugInfo)
                     {
-                        Debug.Log($"AdvancedDeathController: Найден Items Text: {text.name}");
+                        Debug.Log($"AdvancedDeathController: Found Items Text: {text.name}");
                     }
                     break;
                 }
@@ -330,12 +330,12 @@ public class AdvancedDeathController : MonoBehaviour
             foreach (TextMeshProUGUI textTMP in allTextsTMP)
             {
                 string name = textTMP.name.ToLower();
-                if (name.Contains("item") || name.Contains("предмет") || name.Contains("съед") || name.Contains("eaten"))
+                if (name.Contains("item") || name.Contains("eaten"))
                 {
                     itemsEatenTextTMP = textTMP;
                     if (showDebugInfo)
                     {
-                        Debug.Log($"AdvancedDeathController: Найден Items TextMeshPro: {textTMP.name}");
+                        Debug.Log($"AdvancedDeathController: Found Items TextMeshPro: {textTMP.name}");
                     }
                     break;
                 }
@@ -366,7 +366,7 @@ public class AdvancedDeathController : MonoBehaviour
         {
             string name = button.name.ToLower();
             if (name.Contains("mainmenu") || name.Contains("main_menu") || name.Contains("menu") || 
-                name.Contains("главное") || name.Contains("выход") || name.Contains("exit"))
+                name.Contains("main") || name.Contains("exit"))
             {
                 return button;
             }
@@ -376,8 +376,7 @@ public class AdvancedDeathController : MonoBehaviour
             if (buttonText != null)
             {
                 string text = buttonText.text.ToLower();
-                if (text.Contains("главное меню") || text.Contains("main menu") || text.Contains("меню") || 
-                    text.Contains("выход") || text.Contains("exit"))
+                if (text.Contains("main menu") || text.Contains("menu") || text.Contains("exit"))
                 {
                     return button;
                 }
@@ -388,8 +387,7 @@ public class AdvancedDeathController : MonoBehaviour
             if (buttonTextTMP != null)
             {
                 string text = buttonTextTMP.text.ToLower();
-                if (text.Contains("главное меню") || text.Contains("main menu") || text.Contains("меню") || 
-                    text.Contains("выход") || text.Contains("exit"))
+                if (text.Contains("main menu") || text.Contains("menu") || text.Contains("exit"))
                 {
                     return button;
                 }
@@ -405,7 +403,7 @@ public class AdvancedDeathController : MonoBehaviour
         Canvas canvas = FindObjectOfType<Canvas>();
         if (canvas == null)
         {
-            Debug.LogError("AdvancedDeathController: Canvas не найден для создания кнопки главного меню!");
+            Debug.LogError("AdvancedDeathController: Canvas not found for creating main menu button!");
             return;
         }
         
@@ -472,7 +470,7 @@ public class AdvancedDeathController : MonoBehaviour
         
         if (showDebugInfo)
         {
-            Debug.Log($"AdvancedDeathController: Создана кнопка главного меню в позиции {mainMenuButtonPosition}");
+            Debug.Log($"AdvancedDeathController: Created main menu button at position {mainMenuButtonPosition}");
         }
     }
     
@@ -488,7 +486,7 @@ public class AdvancedDeathController : MonoBehaviour
             
             if (showDebugInfo)
             {
-                Debug.Log("AdvancedDeathController: AllPigs изображение настроено и скрыто");
+                Debug.Log("AdvancedDeathController: AllPigs image set up and hidden");
             }
         }
         
@@ -504,7 +502,7 @@ public class AdvancedDeathController : MonoBehaviour
             
             if (showDebugInfo)
             {
-                Debug.Log("AdvancedDeathController: Кнопка главного меню настроена и скрыта");
+                Debug.Log("AdvancedDeathController: Main menu button set up and hidden");
             }
         }
         
@@ -530,12 +528,12 @@ public class AdvancedDeathController : MonoBehaviour
             
             if (showDebugInfo)
             {
-                Debug.Log($"AdvancedDeathController: Подписан на событие смерти {playerHealth.gameObject.name}");
+                Debug.Log($"AdvancedDeathController: Subscribed to death event for {playerHealth.gameObject.name}");
             }
         }
         else
         {
-            Debug.LogError("AdvancedDeathController: Health компонент не найден! Назначьте его вручную или включите autoFindComponents");
+            Debug.LogError("AdvancedDeathController: Health component not found! Please assign it manually or enable autoFindComponents");
         }
     }
     
@@ -545,7 +543,7 @@ public class AdvancedDeathController : MonoBehaviour
         {
             if (showDebugInfo)
             {
-                Debug.Log("AdvancedDeathController: Смерть уже обработана, пропускаю");
+                Debug.Log("AdvancedDeathController: Death already handled, skipping");
             }
             return;
         }
@@ -554,7 +552,7 @@ public class AdvancedDeathController : MonoBehaviour
         
         if (showDebugInfo)
         {
-            Debug.Log("AdvancedDeathController: Получено событие смерти игрока!");
+            Debug.Log("AdvancedDeathController: Death event received!");
         }
         
         StopGameSystems();
@@ -570,7 +568,7 @@ public class AdvancedDeathController : MonoBehaviour
     {
         if (showDebugInfo)
         {
-            Debug.Log($"AdvancedDeathController: Начинаю ожидание {deathDelaySeconds} секунд...");
+            Debug.Log($"AdvancedDeathController: Starting delay wait for {deathDelaySeconds} seconds...");
         }
         
         // Wait for the specified delay
@@ -578,7 +576,7 @@ public class AdvancedDeathController : MonoBehaviour
         
         if (showDebugInfo)
         {
-            Debug.Log("AdvancedDeathController: Задержка завершена, показываю статистику и кнопку главного меню");
+            Debug.Log("AdvancedDeathController: Delay completed, showing statistics and main menu button");
         }
         
         // Show statistics after delay
@@ -590,7 +588,7 @@ public class AdvancedDeathController : MonoBehaviour
             mainMenuButton.gameObject.SetActive(true);
             if (showDebugInfo)
             {
-                Debug.Log("AdvancedDeathController: Кнопка главного меню показана");
+                Debug.Log("AdvancedDeathController: Main menu button shown");
             }
         }
         
@@ -600,7 +598,7 @@ public class AdvancedDeathController : MonoBehaviour
             Destroy(allPigsImage);
             if (showDebugInfo)
             {
-                Debug.Log("AdvancedDeathController: AllPigs изображение удалено");
+                Debug.Log("AdvancedDeathController: AllPigs image removed");
             }
         }
     }
@@ -609,7 +607,7 @@ public class AdvancedDeathController : MonoBehaviour
     {
         if (showDebugInfo)
         {
-            Debug.Log("AdvancedDeathController: Остановка игровых систем...");
+            Debug.Log("AdvancedDeathController: Stopping game systems...");
         }
         
         // Stop MovementSystem
@@ -618,7 +616,7 @@ public class AdvancedDeathController : MonoBehaviour
             movementSystem.enabled = false;
             if (showDebugInfo)
             {
-                Debug.Log("AdvancedDeathController: MovementSystem остановлен");
+                Debug.Log("AdvancedDeathController: MovementSystem stopped");
             }
         }
         
@@ -628,7 +626,7 @@ public class AdvancedDeathController : MonoBehaviour
             playerInputSystem.enabled = false;
             if (showDebugInfo)
             {
-                Debug.Log("AdvancedDeathController: PlayerInputSystem остановлен");
+                Debug.Log("AdvancedDeathController: PlayerInputSystem stopped");
             }
         }
         
@@ -640,7 +638,7 @@ public class AdvancedDeathController : MonoBehaviour
             playerRigidbody.isKinematic = true;
             if (showDebugInfo)
             {
-                Debug.Log("AdvancedDeathController: Rigidbody остановлен");
+                Debug.Log("AdvancedDeathController: Rigidbody stopped");
             }
         }
         
@@ -650,7 +648,7 @@ public class AdvancedDeathController : MonoBehaviour
             cameraSwitcher.enabled = false;
             if (showDebugInfo)
             {
-                Debug.Log("AdvancedDeathController: CameraSwitcher остановлен");
+                Debug.Log("AdvancedDeathController: CameraSwitcher stopped");
             }
         }
     }
@@ -663,12 +661,12 @@ public class AdvancedDeathController : MonoBehaviour
             
             if (showDebugInfo)
             {
-                Debug.Log("AdvancedDeathController: Показано AllPigs изображение");
+                Debug.Log("AdvancedDeathController: Shown AllPigs image");
             }
         }
         else
         {
-            Debug.LogError("AdvancedDeathController: AllPigs изображение не назначено!");
+            Debug.LogError("AdvancedDeathController: AllPigs image not assigned!");
         }
     }
     
@@ -680,8 +678,8 @@ public class AdvancedDeathController : MonoBehaviour
             // Show statistics when death occurs
             statsTracker.ShowStatistics();
             
-            string speedText = $"Макс. скорость: {statsTracker.MaxSpeedReached:F1}";
-            string itemsText = $"Съедено предметов: {statsTracker.TotalItemsEaten}";
+            string speedText = $"Max speed: {statsTracker.MaxSpeedReached:F1}";
+            string itemsText = $"Collected items: {statsTracker.TotalItemsEaten}";
             
             // Update max speed text (regular Text)
             if (maxSpeedText != null)
@@ -689,7 +687,7 @@ public class AdvancedDeathController : MonoBehaviour
                 maxSpeedText.text = speedText;
                 if (showDebugInfo)
                 {
-                    Debug.Log($"AdvancedDeathController: Обновлен текст скорости: {statsTracker.MaxSpeedReached:F1}");
+                    Debug.Log($"AdvancedDeathController: Updated speed text: {statsTracker.MaxSpeedReached:F1}");
                 }
             }
             
@@ -699,7 +697,7 @@ public class AdvancedDeathController : MonoBehaviour
                 maxSpeedTextTMP.text = speedText;
                 if (showDebugInfo)
                 {
-                    Debug.Log($"AdvancedDeathController: Обновлен TextMeshPro скорости: {statsTracker.MaxSpeedReached:F1}");
+                    Debug.Log($"AdvancedDeathController: Updated TextMeshPro speed: {statsTracker.MaxSpeedReached:F1}");
                 }
             }
             
@@ -709,7 +707,7 @@ public class AdvancedDeathController : MonoBehaviour
                 itemsEatenText.text = itemsText;
                 if (showDebugInfo)
                 {
-                    Debug.Log($"AdvancedDeathController: Обновлен текст предметов: {statsTracker.TotalItemsEaten}");
+                    Debug.Log($"AdvancedDeathController: Updated items text: {statsTracker.TotalItemsEaten}");
                 }
             }
             
@@ -719,13 +717,13 @@ public class AdvancedDeathController : MonoBehaviour
                 itemsEatenTextTMP.text = itemsText;
                 if (showDebugInfo)
                 {
-                    Debug.Log($"AdvancedDeathController: Обновлен TextMeshPro предметов: {statsTracker.TotalItemsEaten}");
+                    Debug.Log($"AdvancedDeathController: Updated TextMeshPro items: {statsTracker.TotalItemsEaten}");
                 }
             }
         }
         else
         {
-            Debug.LogWarning("AdvancedDeathController: GameStatsTracker не найден для обновления статистики");
+            Debug.LogWarning("AdvancedDeathController: GameStatsTracker not found for updating statistics");
         }
     }
     
@@ -741,19 +739,19 @@ public class AdvancedDeathController : MonoBehaviour
             
             if (showDebugInfo)
             {
-                Debug.Log("AdvancedDeathController: Запущена музыка смерти");
+                Debug.Log("AdvancedDeathController: Death music played");
             }
         }
         else if (hasPlayedDeathMusic)
         {
             if (showDebugInfo)
             {
-                Debug.Log("AdvancedDeathController: Музыка смерти уже была проиграна");
+                Debug.Log("AdvancedDeathController: Death music already played");
             }
         }
         else
         {
-            Debug.LogWarning("AdvancedDeathController: AudioSource или аудиоклип не назначены!");
+            Debug.LogWarning("AdvancedDeathController: AudioSource or death music clip not assigned!");
         }
     }
     
@@ -763,13 +761,13 @@ public class AdvancedDeathController : MonoBehaviour
         if (allPigsImage != null)
         {
             allPigsImage.SetActive(false);
-            Debug.Log("AdvancedDeathController: AllPigs изображение скрыто");
+            Debug.Log("AdvancedDeathController: AllPigs image hidden");
         }
         
         if (mainMenuButton != null)
         {
             mainMenuButton.gameObject.SetActive(false);
-            Debug.Log("AdvancedDeathController: Кнопка главного меню скрыта");
+            Debug.Log("AdvancedDeathController: Main menu button hidden");
         }
     }
     
@@ -777,14 +775,14 @@ public class AdvancedDeathController : MonoBehaviour
     {
         if (showDebugInfo)
         {
-            Debug.Log($"AdvancedDeathController: Загружаю главное меню: {mainMenuSceneName}");
+            Debug.Log($"AdvancedDeathController: Loading main menu: {mainMenuSceneName}");
         }
         
         // Stop death music before loading scene
         StopDeathMusic();
         
-        // ВАЖНО: НЕ восстанавливаем курсор, оставляем его видимым для главного меню
-        // RestoreCursor(); // Закомментировано - пусть MainMenuManager сам настроит курсор
+        // IMPORTANT: DO NOT restore cursor, leave it visible for main menu
+        // RestoreCursor(); // Commented out - let MainMenuManager set up the cursor itself
         
         // Ensure cursor is visible and unlocked for main menu
         Cursor.visible = true;
@@ -792,7 +790,7 @@ public class AdvancedDeathController : MonoBehaviour
         
         if (showDebugInfo)
         {
-            Debug.Log($"AdvancedDeathController: Курсор подготовлен для главного меню - Visible: {Cursor.visible}, LockState: {Cursor.lockState}");
+            Debug.Log($"AdvancedDeathController: Cursor prepared for main menu - Visible: {Cursor.visible}, LockState: {Cursor.lockState}");
         }
         
         // Ensure time scale is normal before loading scene
@@ -806,18 +804,18 @@ public class AdvancedDeathController : MonoBehaviour
             {
                 if (Application.CanStreamedLevelBeLoaded(mainMenuSceneName))
                 {
-                    Debug.Log($"AdvancedDeathController: Загружаю сцену по имени: {mainMenuSceneName}");
+                    Debug.Log($"AdvancedDeathController: Loading scene by name: {mainMenuSceneName}");
                     UnityEngine.SceneManagement.SceneManager.LoadScene(mainMenuSceneName);
                     return;
                 }
                 else
                 {
-                    Debug.LogWarning($"AdvancedDeathController: Сцена '{mainMenuSceneName}' не может быть загружена по имени");
+                    Debug.LogWarning($"AdvancedDeathController: Scene '{mainMenuSceneName}' cannot be loaded by name");
                 }
             }
             
             // Second try: Load by build index (MainMenu should be at index 0 or 1)
-            Debug.Log("AdvancedDeathController: Пытаюсь загрузить главное меню по индексу...");
+            Debug.Log("AdvancedDeathController: Trying to load main menu by index...");
             
             // Check if we have scenes in build settings
             if (UnityEngine.SceneManagement.SceneManager.sceneCountInBuildSettings > 1)
@@ -830,35 +828,35 @@ public class AdvancedDeathController : MonoBehaviour
                     
                     if (sceneName.ToLower().Contains("mainmenu") || sceneName.ToLower().Contains("menu"))
                     {
-                        Debug.Log($"AdvancedDeathController: Найдена сцена главного меню по индексу {i}: {sceneName}");
+                        Debug.Log($"AdvancedDeathController: Found main menu scene by index {i}: {sceneName}");
                         UnityEngine.SceneManagement.SceneManager.LoadScene(i);
                         return;
                     }
                 }
                 
                 // If no MainMenu found, try index 0 (usually main menu)
-                Debug.Log("AdvancedDeathController: Загружаю сцену по индексу 0 (предполагаемое главное меню)");
+                Debug.Log("AdvancedDeathController: Loading scene by index 0 (assumed main menu)");
                 UnityEngine.SceneManagement.SceneManager.LoadScene(0);
                 return;
             }
             
             // If all else fails
-            Debug.LogError("AdvancedDeathController: Не удалось найти подходящую сцену для загрузки!");
+            Debug.LogError("AdvancedDeathController: Unable to find suitable scene for loading!");
         }
         catch (System.Exception e)
         {
-            Debug.LogError($"AdvancedDeathController: Критическая ошибка загрузки сцены: {e.Message}");
-            Debug.LogError("AdvancedDeathController: Проверьте что сцены добавлены в Build Settings!");
+            Debug.LogError($"AdvancedDeathController: Critical loading scene error: {e.Message}");
+            Debug.LogError("AdvancedDeathController: Check that scenes are added to Build Settings!");
             
             // Last resort: try to quit application or restart current scene
-            Debug.LogError("AdvancedDeathController: Попытка перезагрузки текущей сцены как последний вариант...");
+            Debug.LogError("AdvancedDeathController: Trying to reload current scene as last resort...");
             try
             {
                 UnityEngine.SceneManagement.SceneManager.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
             }
             catch (System.Exception restartException)
             {
-                Debug.LogError($"AdvancedDeathController: Не удалось перезагрузить сцену: {restartException.Message}");
+                Debug.LogError($"AdvancedDeathController: Unable to reload scene: {restartException.Message}");
             }
         }
     }
@@ -879,7 +877,7 @@ public class AdvancedDeathController : MonoBehaviour
         
         HideDeathUI();
         
-        Debug.Log("AdvancedDeathController: Состояние смерти сброшено");
+        Debug.Log("AdvancedDeathController: Death state reset");
     }
     
     public void StopDeathMusic()
@@ -887,7 +885,7 @@ public class AdvancedDeathController : MonoBehaviour
         if (deathAudioSource != null && deathAudioSource.isPlaying)
         {
             deathAudioSource.Stop();
-            Debug.Log("AdvancedDeathController: Остановлена музыка смерти");
+            Debug.Log("AdvancedDeathController: Death music stopped");
         }
     }
     
@@ -931,7 +929,7 @@ public class AdvancedDeathController : MonoBehaviour
     [ContextMenu("Setup Complete Death System")]
     public void SetupCompleteDeathSystem()
     {
-        Debug.Log("=== НАСТРОЙКА ПОЛНОЙ СИСТЕМЫ СМЕРТИ ===");
+        Debug.Log("=== SETUP COMPLETE DEATH SYSTEM ===");
         
         // Auto find all components
         AutoFindComponents();
@@ -942,42 +940,42 @@ public class AdvancedDeathController : MonoBehaviour
         // Subscribe to death event
         SubscribeToDeathEvent();
         
-        Debug.Log("=== СИСТЕМА СМЕРТИ НАСТРОЕНА ===");
+        Debug.Log("=== DEATH SYSTEM SETUP COMPLETE ===");
     }
     
     [ContextMenu("Test Enable Cursor")]
     public void TestEnableCursor()
     {
         EnableCursor();
-        Debug.Log($"AdvancedDeathController: Тест курсора - Visible: {Cursor.visible}, LockState: {Cursor.lockState}");
+        Debug.Log($"AdvancedDeathController: Test cursor - Visible: {Cursor.visible}, LockState: {Cursor.lockState}");
     }
     
     [ContextMenu("Test Restore Cursor")]
     public void TestRestoreCursor()
     {
         RestoreCursor();
-        Debug.Log($"AdvancedDeathController: Курсор восстановлен - Visible: {Cursor.visible}, LockState: {Cursor.lockState}");
+        Debug.Log($"AdvancedDeathController: Cursor restored - Visible: {Cursor.visible}, LockState: {Cursor.lockState}");
     }
     
     [ContextMenu("Test Load Main Menu")]
     public void TestLoadMainMenu()
     {
-        Debug.Log("AdvancedDeathController: Тестирование загрузки главного меню...");
+        Debug.Log("AdvancedDeathController: Testing main menu loading...");
         LoadMainMenu();
     }
     
     [ContextMenu("Diagnose Scene Loading")]
     public void DiagnoseSceneLoading()
     {
-        Debug.Log("=== ДИАГНОСТИКА ЗАГРУЗКИ СЦЕН ===");
+        Debug.Log("=== SCENE LOADING DIAGNOSTICS ===");
         
-        Debug.Log($"Текущая сцена: {UnityEngine.SceneManagement.SceneManager.GetActiveScene().name}");
-        Debug.Log($"Целевая сцена главного меню: '{mainMenuSceneName}'");
-        Debug.Log($"Сцен в Build Settings: {UnityEngine.SceneManagement.SceneManager.sceneCountInBuildSettings}");
+        Debug.Log($"Current scene: {UnityEngine.SceneManagement.SceneManager.GetActiveScene().name}");
+        Debug.Log($"Target main menu scene: '{mainMenuSceneName}'");
+        Debug.Log($"Scenes in Build Settings: {UnityEngine.SceneManagement.SceneManager.sceneCountInBuildSettings}");
         
         // Check if target scene can be loaded
         bool canLoad = !string.IsNullOrEmpty(mainMenuSceneName) && Application.CanStreamedLevelBeLoaded(mainMenuSceneName);
-        Debug.Log($"Можно загрузить '{mainMenuSceneName}': {canLoad}");
+        Debug.Log($"Can load '{mainMenuSceneName}': {canLoad}");
         
         // List all scenes in build settings
         for (int i = 0; i < UnityEngine.SceneManagement.SceneManager.sceneCountInBuildSettings; i++)
@@ -990,29 +988,29 @@ public class AdvancedDeathController : MonoBehaviour
         // Check button setup
         if (mainMenuButton != null)
         {
-            Debug.Log($"Кнопка главного меню: {mainMenuButton.name}");
-            Debug.Log($"Кнопка активна: {mainMenuButton.gameObject.activeInHierarchy}");
-            Debug.Log($"Слушателей у кнопки: {mainMenuButton.onClick.GetPersistentEventCount()}");
+            Debug.Log($"Main menu button: {mainMenuButton.name}");
+            Debug.Log($"Button active: {mainMenuButton.gameObject.activeInHierarchy}");
+            Debug.Log($"Button listeners: {mainMenuButton.onClick.GetPersistentEventCount()}");
         }
         else
         {
-            Debug.LogWarning("Кнопка главного меню НЕ НАЗНАЧЕНА!");
+            Debug.LogWarning("Main menu button NOT ASSIGNED!");
         }
         
-        Debug.Log("=== КОНЕЦ ДИАГНОСТИКИ ===");
+        Debug.Log("=== END DIAGNOSTICS ===");
     }
     
     [ContextMenu("Force Create New Main Menu Button")]
     public void ForceCreateNewMainMenuButton()
     {
-        Debug.Log("AdvancedDeathController: Принудительное создание новой кнопки главного меню...");
+        Debug.Log("AdvancedDeathController: Force creating new main menu button...");
         
         // Destroy existing button if any
         if (mainMenuButton != null)
         {
             DestroyImmediate(mainMenuButton.gameObject);
             mainMenuButton = null;
-            Debug.Log("Старая кнопка удалена");
+            Debug.Log("Old button removed");
         }
         
         // Create new button
@@ -1022,11 +1020,11 @@ public class AdvancedDeathController : MonoBehaviour
         if (mainMenuButton != null)
         {
             SetupDeathUI();
-            Debug.Log("Новая кнопка создана и настроена");
+            Debug.Log("New button created and set up");
         }
         else
         {
-            Debug.LogError("Не удалось создать новую кнопку!");
+            Debug.LogError("Unable to create new button!");
         }
     }
     
@@ -1051,7 +1049,7 @@ public class AdvancedDeathController : MonoBehaviour
             
             if (showDebugInfo)
             {
-                Debug.Log("AdvancedDeathController: Курсор включён для взаимодействия с UI");
+                Debug.Log("AdvancedDeathController: Cursor enabled for UI interaction");
             }
         }
     }
@@ -1063,7 +1061,7 @@ public class AdvancedDeathController : MonoBehaviour
         
         if (showDebugInfo)
         {
-            Debug.Log("AdvancedDeathController: Состояние курсора восстановлено");
+            Debug.Log("AdvancedDeathController: Cursor state restored");
         }
     }
 } 

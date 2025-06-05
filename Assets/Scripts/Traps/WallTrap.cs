@@ -1,4 +1,5 @@
 using UnityEngine;
+using Unity.Entities;
 
 public class WallTrap : BaseTrap
 {
@@ -7,10 +8,10 @@ public class WallTrap : BaseTrap
     private int damageAmount = 1;
     [SerializeField]
     private float bounceForce = 10f;
-    // [SerializeField]
-    // private float speedReductionFactor = 0.2f;
-    // [SerializeField]
-    // private float speedReductionDuration = 1.0f;
+    [SerializeField]
+    private float speedReductionFactor = 0.5f; // Reduce speed to 50%
+    [SerializeField]
+    private float speedReductionDuration = 2.0f; // For 2 seconds
 
     private Collision lastCollision;
 
@@ -52,10 +53,60 @@ public class WallTrap : BaseTrap
             Debug.LogWarning($"Target {target.name} does not have a Rigidbody for bounce effect.", this);
         }
 
-        // PlayerMovementController movementController = target.GetComponent<PlayerMovementController>();
-        // if (movementController != null)
-        // {
-        //     movementController.ApplySpeedReduction(speedReductionFactor, speedReductionDuration);
-        // }
+        // Apply speed reduction effect to both players and bots
+        ApplySpeedReduction(target);
+
+        // Special handling for bot AI interruption
+        EnemyPigAI botAI = target.GetComponent<EnemyPigAI>();
+        if (botAI != null)
+        {
+            botAI.InterruptMovement(speedReductionDuration);
+            Debug.Log($"Interrupted bot AI movement for {speedReductionDuration} seconds");
+        }
+    }
+
+    private void ApplySpeedReduction(GameObject target)
+    {
+        // Try to get EntityLink for status effect system
+        EntityLink entityLink = target.GetComponent<EntityLink>();
+        if (entityLink != null && entityLink.Entity != Entity.Null)
+        {
+            var entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
+            MovementData movementData = target.GetComponent<MovementData>();
+            
+            if (movementData != null)
+            {
+                // Create speed reduction effect
+                PlayerStatusEffectData slowEffect = new PlayerStatusEffectData
+                {
+                    Type = EffectType.Slowed,
+                    RemainingDuration = speedReductionDuration,
+                    EffectStrength = speedReductionFactor,
+                    OriginalValue = movementData.moveSpeed
+                };
+
+                // Apply or replace existing effect
+                if (entityManager.HasComponent<PlayerStatusEffectData>(entityLink.Entity))
+                {
+                    entityManager.SetComponentData(entityLink.Entity, slowEffect);
+                }
+                else
+                {
+                    entityManager.AddComponentData(entityLink.Entity, slowEffect);
+                }
+
+                Debug.Log($"Applied speed reduction effect to {target.name}: {speedReductionFactor}x speed for {speedReductionDuration}s");
+            }
+        }
+        else
+        {
+            // Fallback for entities without EntityLink - direct MovementData modification
+            MovementData movementData = target.GetComponent<MovementData>();
+            if (movementData != null)
+            {
+                movementData.moveSpeed *= speedReductionFactor;
+                Debug.Log($"Applied direct speed reduction to {target.name}: reduced to {movementData.moveSpeed}");
+            }
+        }
     }
 } 

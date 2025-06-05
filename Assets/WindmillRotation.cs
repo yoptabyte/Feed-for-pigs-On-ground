@@ -43,7 +43,7 @@ public class WindmillRotation : MonoBehaviour
             }
             else
             {
-                movingPart.Rotate(Vector3.down * secondaryRotationSpeed * Time.deltaTime, Space.Self); // Vector3.down для обратного вращения
+                movingPart.Rotate(Vector3.down * secondaryRotationSpeed * Time.deltaTime, Space.Self); // Vector3.down for reverse rotation
 
                 if (totalRotationZ <= -rotationLimit)
                 {

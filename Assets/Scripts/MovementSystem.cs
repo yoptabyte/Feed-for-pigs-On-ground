@@ -4,12 +4,32 @@ using UnityEngine;
 [RequireComponent(typeof(InputData))]
 [RequireComponent(typeof(MovementData))]
 [RequireComponent(typeof(GroundCheckData))]
+[RequireComponent(typeof(Animator))]
 public class MovementSystem : MonoBehaviour
 {
+    [Header("Movement Audio")]
+    [SerializeField]
+    private AudioClip walkingSound;
+    [SerializeField]
+    private float walkingVolume = 0.5f;
+    [SerializeField]
+    private float minSpeedForWalking = 0.5f;
+    
+    [Header("Animation")]
+    public float movementThreshold = 0.1f; // Minimum speed to consider as walking
+    
     private Rigidbody rb;
     private InputData inputData;
     private MovementData movementData;
     private GroundCheckData groundCheckData;
+    private Animator animator;
+    
+    // Audio components
+    private AudioSource audioSource;
+    private bool isWalkingAudioPlaying = false;
+    
+    // Animation state
+    private bool isWalking = false;
 
     void Awake()
     {
@@ -17,8 +37,70 @@ public class MovementSystem : MonoBehaviour
         inputData = GetComponent<InputData>();
         movementData = GetComponent<MovementData>();
         groundCheckData = GetComponent<GroundCheckData>();
+        animator = GetComponent<Animator>();
 
         rb.freezeRotation = true;
+        
+        // Setup audio for walking
+        SetupWalkingAudio();
+    }
+    
+    private void SetupWalkingAudio()
+    {
+        // Get existing AudioSources on the object
+        AudioSource[] existingAudioSources = GetComponents<AudioSource>();
+        
+        // Try to find an AudioSource that's not being used by Health component
+        audioSource = null;
+        foreach (AudioSource source in existingAudioSources)
+        {
+            // Check if this AudioSource is used by Health component
+            Health healthComponent = GetComponent<Health>();
+            if (healthComponent != null && healthComponent.deathAudioSource == source)
+            {
+                continue; // Skip this one, it's used by Health
+            }
+            
+            // Check if this AudioSource has a death-related clip
+            if (source.clip != null && (source.clip.name.Contains("die") || source.clip.name.Contains("death")))
+            {
+                continue; // Skip this one, it's probably for death sound
+            }
+            
+            // This AudioSource seems available for walking
+            audioSource = source;
+            break;
+        }
+        
+        // If no suitable AudioSource found, create a dedicated one for walking
+        if (audioSource == null)
+        {
+            audioSource = gameObject.AddComponent<AudioSource>();
+            Debug.Log("🚶 MovementSystem: Created dedicated AudioSource for walking sound");
+        }
+        
+        // Try to load walk.mp3 if not assigned
+        if (walkingSound == null)
+        {
+            // Try to find walk.mp3 in Resources folder
+            walkingSound = Resources.Load<AudioClip>("walk");
+        }
+        
+        // Configure AudioSource for walking
+        if (walkingSound != null)
+        {
+            audioSource.clip = walkingSound;
+            audioSource.volume = walkingVolume;
+            audioSource.loop = true;
+            audioSource.playOnAwake = false;
+            audioSource.spatialBlend = 0f; // 2D sound for player
+            audioSource.priority = 128; // Normal priority for walking sounds
+            Debug.Log("🚶 MovementSystem: Walking sound loaded successfully");
+        }
+        else
+        {
+            Debug.LogWarning("🚶 MovementSystem: Walking sound not found! Please assign walk.mp3 manually in inspector or place it in Resources folder.");
+        }
     }
 
     void FixedUpdate()
@@ -117,6 +199,75 @@ public class MovementSystem : MonoBehaviour
         }
 
         inputData.jumpInput = false;
+        
+        // Handle walking audio
+        HandleWalkingAudio(hasMoveInput);
+        
+        // Handle animation
+        UpdateAnimation(hasMoveInput);
+    }
+    
+    private void UpdateAnimation(bool hasMoveInput)
+    {
+        if (animator == null) return;
+        
+        // Calculate current movement speed
+        float currentSpeed = rb.linearVelocity.magnitude;
+        
+        // Determine if walking based on both input and actual speed
+        bool shouldWalk = hasMoveInput && groundCheckData.isGrounded && currentSpeed > movementThreshold;
+        
+        // Update animation only if state changed
+        if (shouldWalk != isWalking)
+        {
+            isWalking = shouldWalk;
+            animator.SetBool("isWalking", isWalking);
+            
+            Debug.Log($"🚶 Player animation state changed: {(isWalking ? "Walking" : "Idle")} (Speed: {currentSpeed:F2}, Input: {hasMoveInput}, Grounded: {groundCheckData.isGrounded})");
+        }
+    }
+    
+    private void HandleWalkingAudio(bool hasMoveInput)
+    {
+        if (audioSource == null || walkingSound == null) return;
+        
+        // Check if player is alive
+        Health healthComponent = GetComponent<Health>();
+        if (healthComponent != null && !healthComponent.IsAlive)
+        {
+            // Stop walking sound if player is dead
+            if (isWalkingAudioPlaying)
+            {
+                audioSource.Stop();
+                isWalkingAudioPlaying = false;
+                Debug.Log("🚶 MovementSystem: Stopped walking sound - player died");
+            }
+            return;
+        }
+        
+        // Check if player is moving and grounded
+        float currentSpeed = rb.linearVelocity.magnitude;
+        bool shouldPlayWalkingSound = hasMoveInput && groundCheckData.isGrounded && currentSpeed > minSpeedForWalking;
+        
+        if (shouldPlayWalkingSound && !isWalkingAudioPlaying)
+        {
+            audioSource.Play();
+            isWalkingAudioPlaying = true;
+            Debug.Log("🚶 MovementSystem: Started walking sound");
+        }
+        else if (!shouldPlayWalkingSound && isWalkingAudioPlaying)
+        {
+            audioSource.Stop();
+            isWalkingAudioPlaying = false;
+            Debug.Log("🚶 MovementSystem: Stopped walking sound");
+        }
+        
+        // Adjust pitch based on speed
+        if (isWalkingAudioPlaying)
+        {
+            float speedRatio = Mathf.Clamp01(currentSpeed / movementData.maxSpeed);
+            audioSource.pitch = 0.8f + (speedRatio * 0.4f); // Pitch range from 0.8 to 1.2
+        }
     }
     
     /*

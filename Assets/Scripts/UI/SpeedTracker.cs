@@ -3,13 +3,13 @@ using UnityEngine;
 public class SpeedTracker : MonoBehaviour
 {
     [Header("Settings")]
-    [Tooltip("Показывать отладочную информацию")]
+    [Tooltip("Show debug information")]
     public bool showDebugInfo = false;
     
-    [Tooltip("Интервал обновления скорости в секундах")]
+    [Tooltip("Speed update interval in seconds")]
     public float updateInterval = 0.1f;
     
-    [Tooltip("Минимальная скорость для записи (игнорировать очень малые значения)")]
+    [Tooltip("Minimum speed threshold for recording (ignore very small values)")]
     public float minimumSpeedThreshold = 0.5f;
     
     private Rigidbody rb;
@@ -31,13 +31,13 @@ public class SpeedTracker : MonoBehaviour
         
         if (rb == null)
         {
-            Debug.LogError($"SpeedTracker: Rigidbody не найден на {gameObject.name} или его родителях/детях!");
+            Debug.LogError($"SpeedTracker: Rigidbody not found on {gameObject.name} or its parents/children!");
         }
         else
         {
             if (showDebugInfo)
             {
-                Debug.Log($"SpeedTracker: Найден Rigidbody на {rb.gameObject.name} для отслеживания скорости");
+                Debug.Log($"SpeedTracker: Found Rigidbody on {rb.gameObject.name} for speed tracking");
             }
         }
     }
@@ -60,7 +60,7 @@ public class SpeedTracker : MonoBehaviour
                     // Debug only when speed changes significantly or when we have a new max
                     if (showDebugInfo && (Mathf.Abs(currentSpeed - lastRecordedSpeed) > 1f || currentSpeed > previousMax))
                     {
-                        Debug.Log($"SpeedTracker [{gameObject.name}]: Скорость {currentSpeed:F1}, макс {statsTracker.MaxSpeedReached:F1}");
+                        Debug.Log($"SpeedTracker [{gameObject.name}]: Speed {currentSpeed:F1}, max {statsTracker.MaxSpeedReached:F1}");
                     }
                     
                     lastRecordedSpeed = currentSpeed;
@@ -69,7 +69,7 @@ public class SpeedTracker : MonoBehaviour
                 {
                     if (showDebugInfo)
                     {
-                        Debug.LogWarning("SpeedTracker: GameStatsTracker Instance не найден!");
+                        Debug.LogWarning("SpeedTracker: GameStatsTracker Instance not found!");
                     }
                 }
             }
@@ -87,7 +87,7 @@ public class SpeedTracker : MonoBehaviour
         if (statsTracker != null)
         {
             statsTracker.UpdateMaxSpeed(testSpeed);
-            Debug.Log($"SpeedTracker: Тестовая скорость {testSpeed:F1} отправлена в StatTracker");
+            Debug.Log($"SpeedTracker: Test speed {testSpeed:F1} sent to StatTracker");
         }
     }
     
@@ -102,7 +102,7 @@ public class SpeedTracker : MonoBehaviour
             if (statsTracker != null)
             {
                 statsTracker.UpdateMaxSpeed(currentSpeed);
-                Debug.Log($"SpeedTracker: Принудительная запись скорости {currentSpeed:F1}");
+                Debug.Log($"SpeedTracker: Forced speed recording {currentSpeed:F1}");
             }
         }
     }
@@ -113,17 +113,17 @@ public class SpeedTracker : MonoBehaviour
     {
         if (rb != null)
         {
-            Debug.Log($"SpeedTracker [{gameObject.name}]: Текущая скорость {rb.linearVelocity.magnitude:F1}");
+            Debug.Log($"SpeedTracker [{gameObject.name}]: Current speed {rb.linearVelocity.magnitude:F1}");
             
             GameStatsTracker statsTracker = GameStatsTracker.Instance;
             if (statsTracker != null)
             {
-                Debug.Log($"SpeedTracker: Максимальная записанная скорость {statsTracker.MaxSpeedReached:F1}");
+                Debug.Log($"SpeedTracker: Maximum recorded speed {statsTracker.MaxSpeedReached:F1}");
             }
         }
         else
         {
-            Debug.LogError("SpeedTracker: Rigidbody не найден!");
+            Debug.LogError("SpeedTracker: Rigidbody not found!");
         }
     }
 } 

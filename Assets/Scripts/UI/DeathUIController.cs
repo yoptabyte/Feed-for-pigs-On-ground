@@ -5,29 +5,29 @@ using System.Collections;
 public class DeathUIController : MonoBehaviour
 {
     [Header("Death UI Settings")]
-    [Tooltip("UI изображение AllPigs для показа при смерти")]
+    [Tooltip("AllPigs UI image to show on death")]
     public GameObject allPigsImage;
     
-    [Tooltip("Компонент Health свиньи/игрока")]
+    [Tooltip("Player/pig Health component")]
     public Health playerHealth;
     
     [Header("Audio Settings")]
-    [Tooltip("AudioSource для проигрывания музыки смерти")]
+    [Tooltip("AudioSource for playing death music")]
     public AudioSource deathAudioSource;
     
-    [Tooltip("Аудиоклип для проигрывания при смерти")]
+    [Tooltip("Audio clip to play on death")]
     public AudioClip deathMusicClip;
     
-    [Tooltip("Громкость музыки смерти")]
+    [Tooltip("Death music volume")]
     [Range(0f, 1f)]
     public float deathMusicVolume = 0.8f;
     
     [Header("Auto Find Settings")]
-    [Tooltip("Автоматически найти компоненты при старте")]
+    [Tooltip("Automatically find components on start")]
     public bool autoFindComponents = true;
     
     [Header("Debug")]
-    [Tooltip("Показывать отладочную информацию")]
+    [Tooltip("Show debug information")]
     public bool showDebugInfo = false;
     
     // Private variables
@@ -47,7 +47,7 @@ public class DeathUIController : MonoBehaviour
     
     private void AutoFindComponents()
     {
-        Debug.Log("DeathUIController: Автопоиск компонентов...");
+        Debug.Log("DeathUIController: Auto-finding components...");
         
         // Find AllPigs image
         if (allPigsImage == null)
@@ -55,11 +55,11 @@ public class DeathUIController : MonoBehaviour
             allPigsImage = FindObjectByName("AllPigs");
             if (allPigsImage != null)
             {
-                Debug.Log($"DeathUIController: Найден AllPigs: {allPigsImage.name}");
+                Debug.Log($"DeathUIController: Found AllPigs: {allPigsImage.name}");
             }
             else
             {
-                Debug.LogWarning("DeathUIController: AllPigs изображение не найдено!");
+                Debug.LogWarning("DeathUIController: AllPigs image not found!");
             }
         }
         
@@ -80,10 +80,10 @@ public class DeathUIController : MonoBehaviour
                 foreach (Health health in allHealthComponents)
                 {
                     string name = health.gameObject.name.ToLower();
-                    if (name.Contains("pig") || name.Contains("player") || name.Contains("свин"))
+                    if (name.Contains("pig") || name.Contains("player"))
                     {
                         playerHealth = health;
-                        Debug.Log($"DeathUIController: Найден Health компонент: {health.gameObject.name}");
+                        Debug.Log($"DeathUIController: Found Health component: {health.gameObject.name}");
                         break;
                     }
                 }
@@ -97,7 +97,7 @@ public class DeathUIController : MonoBehaviour
             if (deathAudioSource == null)
             {
                 deathAudioSource = gameObject.AddComponent<AudioSource>();
-                Debug.Log("DeathUIController: Создан новый AudioSource");
+                Debug.Log("DeathUIController: Created new AudioSource");
             }
         }
     }
@@ -128,7 +128,7 @@ public class DeathUIController : MonoBehaviour
             
             if (showDebugInfo)
             {
-                Debug.Log("DeathUIController: AllPigs изображение настроено и скрыто");
+                Debug.Log("DeathUIController: AllPigs image set up and hidden");
             }
         }
         
@@ -154,12 +154,12 @@ public class DeathUIController : MonoBehaviour
             
             if (showDebugInfo)
             {
-                Debug.Log($"DeathUIController: Подписан на событие смерти {playerHealth.gameObject.name}");
+                Debug.Log($"DeathUIController: Subscribed to death event for {playerHealth.gameObject.name}");
             }
         }
         else
         {
-            Debug.LogError("DeathUIController: Health компонент не найден! Назначьте его вручную или включите autoFindComponents");
+            Debug.LogError("DeathUIController: Health component not found! Please assign it manually or enable autoFindComponents");
         }
     }
     
@@ -167,7 +167,7 @@ public class DeathUIController : MonoBehaviour
     {
         if (showDebugInfo)
         {
-            Debug.Log("DeathUIController: Получено событие смерти игрока!");
+            Debug.Log("DeathUIController: Death event received!");
         }
         
         ShowDeathUI();
@@ -182,12 +182,12 @@ public class DeathUIController : MonoBehaviour
             
             if (showDebugInfo)
             {
-                Debug.Log("DeathUIController: Показано AllPigs изображение");
+                Debug.Log("DeathUIController: Shown AllPigs image");
             }
         }
         else
         {
-            Debug.LogError("DeathUIController: AllPigs изображение не назначено!");
+            Debug.LogError("DeathUIController: AllPigs image not assigned!");
         }
     }
     
@@ -203,19 +203,19 @@ public class DeathUIController : MonoBehaviour
             
             if (showDebugInfo)
             {
-                Debug.Log("DeathUIController: Запущена музыка смерти");
+                Debug.Log("DeathUIController: Death music played");
             }
         }
         else if (hasPlayedDeathMusic)
         {
             if (showDebugInfo)
             {
-                Debug.Log("DeathUIController: Музыка смерти уже была проиграна");
+                Debug.Log("DeathUIController: Death music already played");
             }
         }
         else
         {
-            Debug.LogWarning("DeathUIController: AudioSource или аудиоклип не назначены!");
+            Debug.LogWarning("DeathUIController: AudioSource or death music clip not assigned!");
         }
     }
     
@@ -225,14 +225,14 @@ public class DeathUIController : MonoBehaviour
         if (allPigsImage != null)
         {
             allPigsImage.SetActive(false);
-            Debug.Log("DeathUIController: AllPigs изображение скрыто");
+            Debug.Log("DeathUIController: AllPigs image hidden");
         }
     }
     
     public void ResetDeathMusic()
     {
         hasPlayedDeathMusic = false;
-        Debug.Log("DeathUIController: Сброшен флаг музыки смерти");
+        Debug.Log("DeathUIController: Death music flag reset");
     }
     
     public void StopDeathMusic()
@@ -240,7 +240,7 @@ public class DeathUIController : MonoBehaviour
         if (deathAudioSource != null && deathAudioSource.isPlaying)
         {
             deathAudioSource.Stop();
-            Debug.Log("DeathUIController: Остановлена музыка смерти");
+            Debug.Log("DeathUIController: Death music stopped");
         }
     }
     
@@ -248,7 +248,7 @@ public class DeathUIController : MonoBehaviour
     [ContextMenu("Test Death UI")]
     public void TestDeathUI()
     {
-        Debug.Log("DeathUIController: Тестирование UI смерти...");
+        Debug.Log("DeathUIController: Testing death UI...");
         OnPlayerDeath();
     }
     
@@ -258,7 +258,7 @@ public class DeathUIController : MonoBehaviour
         HideDeathUI();
         ResetDeathMusic();
         StopDeathMusic();
-        Debug.Log("DeathUIController: Состояние смерти сброшено");
+        Debug.Log("DeathUIController: Death state reset");
     }
     
     [ContextMenu("Find Components")]

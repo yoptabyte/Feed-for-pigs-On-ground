@@ -6,10 +6,10 @@ using System.Collections;
 public class DeathSystemDiagnostics : MonoBehaviour
 {
     [Header("Diagnostic Settings")]
-    [Tooltip("Показывать подробную диагностику")]
+    [Tooltip("Show detailed diagnostics")]
     public bool enableDiagnostics = true;
     
-    [Tooltip("Интервал диагностики в секундах")]
+    [Tooltip("Diagnostics interval in seconds")]
     public float diagnosticInterval = 2f;
     
     private float lastDiagnosticTime;
@@ -18,7 +18,7 @@ public class DeathSystemDiagnostics : MonoBehaviour
     {
         if (enableDiagnostics)
         {
-            Debug.Log("=== ДИАГНОСТИКА СИСТЕМЫ СМЕРТИ ===");
+            Debug.Log("=== DEATH SYSTEM DIAGNOSTICS ===");
             PerformFullDiagnostic();
         }
     }
@@ -35,7 +35,7 @@ public class DeathSystemDiagnostics : MonoBehaviour
     [ContextMenu("Full Diagnostic")]
     public void PerformFullDiagnostic()
     {
-        Debug.Log("=== ПОЛНАЯ ДИАГНОСТИКА СИСТЕМЫ СМЕРТИ ===");
+        Debug.Log("=== FULL DEATH SYSTEM DIAGNOSTIC ===");
         
         // Check GameStatsTracker
         CheckGameStatsTracker();
@@ -52,7 +52,7 @@ public class DeathSystemDiagnostics : MonoBehaviour
         // Check Player Health
         CheckPlayerHealth();
         
-        Debug.Log("=== ДИАГНОСТИКА ЗАВЕРШЕНА ===");
+        Debug.Log("=== DIAGNOSTICS COMPLETE ===");
     }
     
     [ContextMenu("Quick Diagnostic")]
@@ -61,7 +61,7 @@ public class DeathSystemDiagnostics : MonoBehaviour
         GameStatsTracker statsTracker = GameStatsTracker.Instance;
         if (statsTracker != null)
         {
-            Debug.Log($"[ДИАГНОСТИКА] Макс. скорость: {statsTracker.MaxSpeedReached:F1}, Предметов: {statsTracker.TotalItemsEaten}");
+            Debug.Log($"[DIAGNOSTICS] Max speed: {statsTracker.MaxSpeedReached:F1}, Items: {statsTracker.TotalItemsEaten}");
         }
     }
     
@@ -71,30 +71,30 @@ public class DeathSystemDiagnostics : MonoBehaviour
         
         if (statsTracker == null)
         {
-            Debug.LogError("[ДИАГНОСТИКА] GameStatsTracker.Instance = NULL! Singleton не создан.");
+            Debug.LogError("[DIAGNOSTICS] GameStatsTracker.Instance = NULL! Singleton not created.");
             return;
         }
         
-        Debug.Log($"[ДИАГНОСТИКА] GameStatsTracker найден: {statsTracker.name}");
-        Debug.Log($"[ДИАГНОСТИКА] - Макс. скорость: {statsTracker.MaxSpeedReached:F1}");
-        Debug.Log($"[ДИАГНОСТИКА] - Съедено предметов: {statsTracker.TotalItemsEaten}");
-        Debug.Log($"[ДИАГНОСТИКА] - Скрыта на старте: {statsTracker.hideStatsAtStart}");
+        Debug.Log($"[DIAGNOSTICS] GameStatsTracker found: {statsTracker.name}");
+        Debug.Log($"[DIAGNOSTICS] - Max speed: {statsTracker.MaxSpeedReached:F1}");
+        Debug.Log($"[DIAGNOSTICS] - Collected items: {statsTracker.TotalItemsEaten}");
+        Debug.Log($"[DIAGNOSTICS] - Hidden at start: {statsTracker.hideStatsAtStart}");
         
         // Check UI references
         bool hasSpeedUI = statsTracker.maxSpeedText != null || statsTracker.maxSpeedTextTMP != null;
         bool hasItemsUI = statsTracker.itemsEatenText != null || statsTracker.itemsEatenTextTMP != null;
         
-        Debug.Log($"[ДИАГНОСТИКА] - UI скорости назначен: {hasSpeedUI}");
-        Debug.Log($"[ДИАГНОСТИКА] - UI предметов назначен: {hasItemsUI}");
+        Debug.Log($"[DIAGNOSTICS] - UI speed assigned: {hasSpeedUI}");
+        Debug.Log($"[DIAGNOSTICS] - UI items assigned: {hasItemsUI}");
         
         if (statsTracker.maxSpeedTextTMP != null)
         {
-            Debug.Log($"[ДИАГНОСТИКА] - MaxSpeedTextTMP: {statsTracker.maxSpeedTextTMP.name}, активен: {statsTracker.maxSpeedTextTMP.gameObject.activeInHierarchy}, текст: '{statsTracker.maxSpeedTextTMP.text}'");
+            Debug.Log($"[DIAGNOSTICS] - MaxSpeedTextTMP: {statsTracker.maxSpeedTextTMP.name}, active: {statsTracker.maxSpeedTextTMP.gameObject.activeInHierarchy}, text: '{statsTracker.maxSpeedTextTMP.text}'");
         }
         
         if (statsTracker.itemsEatenTextTMP != null)
         {
-            Debug.Log($"[ДИАГНОСТИКА] - ItemsEatenTextTMP: {statsTracker.itemsEatenTextTMP.name}, активен: {statsTracker.itemsEatenTextTMP.gameObject.activeInHierarchy}, текст: '{statsTracker.itemsEatenTextTMP.text}'");
+            Debug.Log($"[DIAGNOSTICS] - ItemsEatenTextTMP: {statsTracker.itemsEatenTextTMP.name}, active: {statsTracker.itemsEatenTextTMP.gameObject.activeInHierarchy}, text: '{statsTracker.itemsEatenTextTMP.text}'");
         }
     }
     
@@ -104,32 +104,32 @@ public class DeathSystemDiagnostics : MonoBehaviour
         
         if (deathController == null)
         {
-            Debug.LogWarning("[ДИАГНОСТИКА] AdvancedDeathController не найден!");
+            Debug.LogWarning("[DIAGNOSTICS] AdvancedDeathController not found!");
             return;
         }
         
-        Debug.Log($"[ДИАГНОСТИКА] AdvancedDeathController найден: {deathController.name}");
-        Debug.Log($"[ДИАГНОСТИКА] - Автопоиск включён: {deathController.autoFindComponents}");
-        Debug.Log($"[ДИАГНОСТИКА] - Отладка включена: {deathController.showDebugInfo}");
-        Debug.Log($"[ДИАГНОСТИКА] - Health найден: {deathController.playerHealth != null}");
-        Debug.Log($"[ДИАГНОСТИКА] - AllPigs изображение: {deathController.allPigsImage != null}");
-        Debug.Log($"[ДИАГНОСТИКА] - Кнопка главного меню: {deathController.mainMenuButton != null}");
-        Debug.Log($"[ДИАГНОСТИКА] - Показывать кнопку меню: {deathController.showMainMenuButton}");
-        Debug.Log($"[ДИАГНОСТИКА] - Создавать кнопку меню: {deathController.createMainMenuButton}");
-        Debug.Log($"[ДИАГНОСТИКА] - Сцена главного меню: {deathController.mainMenuSceneName}");
-        Debug.Log($"[ДИАГНОСТИКА] - Задержка смерти: {deathController.deathDelaySeconds} сек");
-        Debug.Log($"[ДИАГНОСТИКА] - Включать курсор при смерти: {deathController.enableCursorOnDeath}");
-        Debug.Log($"[ДИАГНОСТИКА] - Разблокировать курсор: {deathController.unlockCursorOnDeath}");
-        Debug.Log($"[ДИАГНОСТИКА] - Текущий курсор: Visible={Cursor.visible}, LockState={Cursor.lockState}");
+        Debug.Log($"[DIAGNOSTICS] AdvancedDeathController found: {deathController.name}");
+        Debug.Log($"[DIAGNOSTICS] - Auto find enabled: {deathController.autoFindComponents}");
+        Debug.Log($"[DIAGNOSTICS] - Debug enabled: {deathController.showDebugInfo}");
+        Debug.Log($"[DIAGNOSTICS] - Health found: {deathController.playerHealth != null}");
+        Debug.Log($"[DIAGNOSTICS] - AllPigs image: {deathController.allPigsImage != null}");
+        Debug.Log($"[DIAGNOSTICS] - Main menu button: {deathController.mainMenuButton != null}");
+        Debug.Log($"[DIAGNOSTICS] - Show main menu button: {deathController.showMainMenuButton}");
+        Debug.Log($"[DIAGNOSTICS] - Create main menu button: {deathController.createMainMenuButton}");
+        Debug.Log($"[DIAGNOSTICS] - Main menu scene: {deathController.mainMenuSceneName}");
+        Debug.Log($"[DIAGNOSTICS] - Death delay: {deathController.deathDelaySeconds} sec");
+        Debug.Log($"[DIAGNOSTICS] - Enable cursor on death: {deathController.enableCursorOnDeath}");
+        Debug.Log($"[DIAGNOSTICS] - Unlock cursor: {deathController.unlockCursorOnDeath}");
+        Debug.Log($"[DIAGNOSTICS] - Current cursor: Visible={Cursor.visible}, LockState={Cursor.lockState}");
         
         if (deathController.playerHealth != null)
         {
-            Debug.Log($"[ДИАГНОСТИКА] - Player Health: {deathController.playerHealth.gameObject.name}");
+            Debug.Log($"[DIAGNOSTICS] - Player Health: {deathController.playerHealth.gameObject.name}");
         }
         
         if (deathController.mainMenuButton != null)
         {
-            Debug.Log($"[ДИАГНОСТИКА] - Кнопка меню: {deathController.mainMenuButton.name}, активна: {deathController.mainMenuButton.gameObject.activeInHierarchy}");
+            Debug.Log($"[DIAGNOSTICS] - Main menu button: {deathController.mainMenuButton.name}, active: {deathController.mainMenuButton.gameObject.activeInHierarchy}");
         }
     }
     
@@ -139,18 +139,18 @@ public class DeathSystemDiagnostics : MonoBehaviour
         
         if (speedTrackers.Length == 0)
         {
-            Debug.LogWarning("[ДИАГНОСТИКА] SpeedTracker не найден! Скорость не отслеживается.");
+            Debug.LogWarning("[DIAGNOSTICS] SpeedTracker not found! Speed not tracked.");
             return;
         }
         
-        Debug.Log($"[ДИАГНОСТИКА] Найдено SpeedTracker: {speedTrackers.Length}");
+        Debug.Log($"[DIAGNOSTICS] Found SpeedTracker: {speedTrackers.Length}");
         
         foreach (SpeedTracker tracker in speedTrackers)
         {
-            Debug.Log($"[ДИАГНОСТИКА] - SpeedTracker на: {tracker.gameObject.name}");
-            Debug.Log($"[ДИАГНОСТИКА] - - Отладка: {tracker.showDebugInfo}");
-            Debug.Log($"[ДИАГНОСТИКА] - - Интервал: {tracker.updateInterval}");
-            Debug.Log($"[ДИАГНОСТИКА] - - Мин. порог: {tracker.minimumSpeedThreshold}");
+            Debug.Log($"[DIAGNOSTICS] - SpeedTracker on: {tracker.gameObject.name}");
+            Debug.Log($"[DIAGNOSTICS] - - Debug: {tracker.showDebugInfo}");
+            Debug.Log($"[DIAGNOSTICS] - - Interval: {tracker.updateInterval}");
+            Debug.Log($"[DIAGNOSTICS] - - Min threshold: {tracker.minimumSpeedThreshold}");
             
             // Check if Rigidbody exists
             Rigidbody rb = tracker.GetComponent<Rigidbody>();
@@ -159,42 +159,42 @@ public class DeathSystemDiagnostics : MonoBehaviour
             
             if (rb != null)
             {
-                Debug.Log($"[ДИАГНОСТИКА] - - Rigidbody найден, скорость: {rb.linearVelocity.magnitude:F1}");
+                Debug.Log($"[DIAGNOSTICS] - - Rigidbody found, speed: {rb.linearVelocity.magnitude:F1}");
             }
             else
             {
-                Debug.LogError($"[ДИАГНОСТИКА] - - Rigidbody НЕ НАЙДЕН на {tracker.name}!");
+                Debug.LogError($"[DIAGNOSTICS] - - Rigidbody NOT FOUND on {tracker.name}!");
             }
         }
     }
     
     private void CheckUIElements()
     {
-        Debug.Log("[ДИАГНОСТИКА] Проверка UI элементов...");
+        Debug.Log("[DIAGNOSTICS] Checking UI elements...");
         
         // Find all Text and TextMeshPro components
         Text[] allTexts = FindObjectsOfType<Text>(true); // Include inactive
         TextMeshProUGUI[] allTextsTMP = FindObjectsOfType<TextMeshProUGUI>(true); // Include inactive
         
-        Debug.Log($"[ДИАГНОСТИКА] Найдено Text компонентов: {allTexts.Length}");
-        Debug.Log($"[ДИАГНОСТИКА] Найдено TextMeshPro компонентов: {allTextsTMP.Length}");
+        Debug.Log($"[DIAGNOSTICS] Found Text components: {allTexts.Length}");
+        Debug.Log($"[DIAGNOSTICS] Found TextMeshPro components: {allTextsTMP.Length}");
         
         // Check for speed-related UI
         foreach (Text text in allTexts)
         {
             string name = text.name.ToLower();
-            if (name.Contains("speed") || name.Contains("скорость") || name.Contains("max"))
+            if (name.Contains("speed") || name.Contains("velocity") || name.Contains("max"))
             {
-                Debug.Log($"[ДИАГНОСТИКА] Speed Text найден: {text.name}, активен: {text.gameObject.activeInHierarchy}, parent активен: {text.transform.parent?.gameObject.activeInHierarchy}, текст: '{text.text}'");
+                Debug.Log($"[DIAGNOSTICS] Speed Text found: {text.name}, active: {text.gameObject.activeInHierarchy}, parent active: {text.transform.parent?.gameObject.activeInHierarchy}, text: '{text.text}'");
             }
         }
         
         foreach (TextMeshProUGUI textTMP in allTextsTMP)
         {
             string name = textTMP.name.ToLower();
-            if (name.Contains("speed") || name.Contains("скорость") || name.Contains("max"))
+            if (name.Contains("speed") || name.Contains("velocity") || name.Contains("max"))
             {
-                Debug.Log($"[ДИАГНОСТИКА] Speed TextMeshPro найден: {textTMP.name}, активен: {textTMP.gameObject.activeInHierarchy}, parent активен: {textTMP.transform.parent?.gameObject.activeInHierarchy}, текст: '{textTMP.text}'");
+                Debug.Log($"[DIAGNOSTICS] Speed TextMeshPro found: {textTMP.name}, active: {textTMP.gameObject.activeInHierarchy}, parent active: {textTMP.transform.parent?.gameObject.activeInHierarchy}, text: '{textTMP.text}'");
             }
         }
         
@@ -202,27 +202,27 @@ public class DeathSystemDiagnostics : MonoBehaviour
         foreach (Text text in allTexts)
         {
             string name = text.name.ToLower();
-            if (name.Contains("item") || name.Contains("предмет") || name.Contains("съед") || name.Contains("eaten"))
+            if (name.Contains("item") || name.Contains("item") || name.Contains("eaten"))
             {
-                Debug.Log($"[ДИАГНОСТИКА] Items Text найден: {text.name}, активен: {text.gameObject.activeInHierarchy}, parent активен: {text.transform.parent?.gameObject.activeInHierarchy}, текст: '{text.text}'");
+                Debug.Log($"[DIAGNOSTICS] Items Text found: {text.name}, active: {text.gameObject.activeInHierarchy}, parent active: {text.transform.parent?.gameObject.activeInHierarchy}, text: '{text.text}'");
             }
         }
         
         foreach (TextMeshProUGUI textTMP in allTextsTMP)
         {
             string name = textTMP.name.ToLower();
-            if (name.Contains("item") || name.Contains("предмет") || name.Contains("съед") || name.Contains("eaten"))
+            if (name.Contains("item") || name.Contains("item") || name.Contains("eaten"))
             {
-                Debug.Log($"[ДИАГНОСТИКА] Items TextMeshPro найден: {textTMP.name}, активен: {textTMP.gameObject.activeInHierarchy}, parent активен: {textTMP.transform.parent?.gameObject.activeInHierarchy}, текст: '{textTMP.text}'");
+                Debug.Log($"[DIAGNOSTICS] Items TextMeshPro found: {textTMP.name}, active: {textTMP.gameObject.activeInHierarchy}, parent active: {textTMP.transform.parent?.gameObject.activeInHierarchy}, text: '{textTMP.text}'");
             }
         }
         
         // Check Canvas
         Canvas[] allCanvases = FindObjectsOfType<Canvas>();
-        Debug.Log($"[ДИАГНОСТИКА] Найдено Canvas: {allCanvases.Length}");
+        Debug.Log($"[DIAGNOSTICS] Found Canvas: {allCanvases.Length}");
         foreach (Canvas canvas in allCanvases)
         {
-            Debug.Log($"[ДИАГНОСТИКА] Canvas: {canvas.name}, активен: {canvas.gameObject.activeInHierarchy}, render mode: {canvas.renderMode}");
+            Debug.Log($"[DIAGNOSTICS] Canvas: {canvas.name}, active: {canvas.gameObject.activeInHierarchy}, render mode: {canvas.renderMode}");
         }
     }
     
@@ -238,7 +238,7 @@ public class DeathSystemDiagnostics : MonoBehaviour
             playerHealth = playerByTag.GetComponent<Health>();
             if (playerHealth != null)
             {
-                Debug.Log($"[ДИАГНОСТИКА] Player Health найден по тегу: {playerByTag.name}");
+                Debug.Log($"[DIAGNOSTICS] Player Health found by tag: {playerByTag.name}");
             }
         }
         
@@ -249,10 +249,10 @@ public class DeathSystemDiagnostics : MonoBehaviour
             foreach (Health health in allHealthComponents)
             {
                 string name = health.gameObject.name.ToLower();
-                if (name.Contains("pig") || name.Contains("player") || name.Contains("свин"))
+                if (name.Contains("pig") || name.Contains("player") || name.Contains("pig"))
                 {
                     playerHealth = health;
-                    Debug.Log($"[ДИАГНОСТИКА] Player Health найден по имени: {health.gameObject.name}");
+                    Debug.Log($"[DIAGNOSTICS] Player Health found by name: {health.gameObject.name}");
                     break;
                 }
             }
@@ -260,12 +260,12 @@ public class DeathSystemDiagnostics : MonoBehaviour
         
         if (playerHealth == null)
         {
-            Debug.LogError("[ДИАГНОСТИКА] Player Health НЕ НАЙДЕН!");
+            Debug.LogError("[DIAGNOSTICS] Player Health NOT FOUND!");
             return;
         }
         
-        Debug.Log($"[ДИАГНОСТИКА] Player Health: {playerHealth.CurrentHP}/{playerHealth.MaxHP} HP");
-        Debug.Log($"[ДИАГНОСТИКА] - Жив: {playerHealth.IsAlive}");
+        Debug.Log($"[DIAGNOSTICS] Player Health: {playerHealth.CurrentHP}/{playerHealth.MaxHP} HP");
+        Debug.Log($"[DIAGNOSTICS] - Alive: {playerHealth.IsAlive}");
     }
     
     [ContextMenu("Test Speed Update")]
@@ -276,11 +276,11 @@ public class DeathSystemDiagnostics : MonoBehaviour
         {
             float testSpeed = Random.Range(10f, 50f);
             statsTracker.UpdateMaxSpeed(testSpeed);
-            Debug.Log($"[ТЕСТ] Установлена тестовая скорость: {testSpeed:F1}");
+            Debug.Log($"[TEST] Test speed set: {testSpeed:F1}");
         }
         else
         {
-            Debug.LogError("[ТЕСТ] GameStatsTracker не найден для теста скорости!");
+            Debug.LogError("[TEST] GameStatsTracker not found for speed test!");
         }
     }
     
@@ -291,11 +291,11 @@ public class DeathSystemDiagnostics : MonoBehaviour
         if (statsTracker != null)
         {
             statsTracker.AddItemEaten("TestItem");
-            Debug.Log("[ТЕСТ] Добавлен тестовый предмет");
+            Debug.Log("[TEST] Test item added");
         }
         else
         {
-            Debug.LogError("[ТЕСТ] GameStatsTracker не найден для теста предмета!");
+            Debug.LogError("[TEST] GameStatsTracker not found for test item!");
         }
     }
     
@@ -306,11 +306,11 @@ public class DeathSystemDiagnostics : MonoBehaviour
         if (statsTracker != null)
         {
             statsTracker.ShowStatistics();
-            Debug.Log("[ТЕСТ] Статистика показана");
+            Debug.Log("[TEST] Statistics shown");
         }
         else
         {
-            Debug.LogError("[ТЕСТ] GameStatsTracker не найден!");
+            Debug.LogError("[TEST] GameStatsTracker not found!");
         }
     }
     
@@ -321,39 +321,39 @@ public class DeathSystemDiagnostics : MonoBehaviour
         if (deathController != null)
         {
             deathController.TestDeath();
-            Debug.Log("[ТЕСТ] Смерть симулирована");
+            Debug.Log("[TEST] Death simulated");
         }
         else
         {
-            Debug.LogError("[ТЕСТ] AdvancedDeathController не найден!");
+            Debug.LogError("[TEST] AdvancedDeathController not found!");
         }
     }
     
     [ContextMenu("Test Death With Full Diagnostic")]
     public void TestDeathWithDiagnostic()
     {
-        Debug.Log("=== ТЕСТИРОВАНИЕ СМЕРТИ С ДИАГНОСТИКОЙ ===");
+        Debug.Log("=== TESTING DEATH WITH DIAGNOSTICS ===");
         
         // Step 1: Add some test data
         GameStatsTracker statsTracker = GameStatsTracker.Instance;
         if (statsTracker != null)
         {
-            Debug.Log("[ТЕСТ] Добавляю тестовые данные...");
+            Debug.Log("[TEST] Adding test data...");
             statsTracker.UpdateMaxSpeed(25.7f);
             statsTracker.AddItemEaten("Apple");
             statsTracker.AddItemEaten("Berry");
-            Debug.Log($"[ТЕСТ] Тестовые данные: скорость {statsTracker.MaxSpeedReached:F1}, предметов {statsTracker.TotalItemsEaten}");
+            Debug.Log($"[TEST] Test data: speed {statsTracker.MaxSpeedReached:F1}, items {statsTracker.TotalItemsEaten}");
         }
         
         // Step 2: Check UI before death
-        Debug.Log("[ТЕСТ] Проверка UI до смерти:");
+        Debug.Log("[TEST] Checking UI before death:");
         CheckStatisticsVisibility();
         
         // Step 3: Trigger death
         AdvancedDeathController deathController = FindObjectOfType<AdvancedDeathController>();
         if (deathController != null)
         {
-            Debug.Log("[ТЕСТ] Симулирую смерть...");
+            Debug.Log("[TEST] Simulating death...");
             deathController.TestDeath();
             
             // Wait a frame and check again
@@ -361,7 +361,7 @@ public class DeathSystemDiagnostics : MonoBehaviour
         }
         else
         {
-            Debug.LogError("[ТЕСТ] AdvancedDeathController не найден!");
+            Debug.LogError("[TEST] AdvancedDeathController not found!");
         }
     }
     
@@ -369,12 +369,12 @@ public class DeathSystemDiagnostics : MonoBehaviour
     {
         yield return new WaitForSeconds(0.1f); // Short delay to allow death to process
         
-        Debug.Log("[ТЕСТ] Проверка UI сразу после смерти:");
+        Debug.Log("[TEST] Checking UI immediately after death:");
         CheckStatisticsVisibility();
         
         yield return new WaitForSeconds(4.5f); // Wait for death delay + buffer
         
-        Debug.Log("[ТЕСТ] Проверка UI после задержки смерти:");
+        Debug.Log("[TEST] Checking UI after death delay:");
         CheckStatisticsVisibility();
     }
     
@@ -383,7 +383,7 @@ public class DeathSystemDiagnostics : MonoBehaviour
         GameStatsTracker statsTracker = GameStatsTracker.Instance;
         if (statsTracker == null)
         {
-            Debug.LogError("[ВИДИМОСТЬ] GameStatsTracker не найден!");
+            Debug.LogError("[VISIBILITY] GameStatsTracker not found!");
             return;
         }
         
@@ -391,42 +391,42 @@ public class DeathSystemDiagnostics : MonoBehaviour
         if (statsTracker.maxSpeedText != null)
         {
             bool visible = statsTracker.maxSpeedText.gameObject.activeInHierarchy;
-            Debug.Log($"[ВИДИМОСТЬ] MaxSpeedText: активен={visible}, текст='{statsTracker.maxSpeedText.text}'");
+            Debug.Log($"[VISIBILITY] MaxSpeedText: active={visible}, text='{statsTracker.maxSpeedText.text}'");
         }
         else
         {
-            Debug.Log("[ВИДИМОСТЬ] MaxSpeedText: НЕ НАЗНАЧЕН");
+            Debug.Log("[VISIBILITY] MaxSpeedText: NOT ASSIGNED");
         }
         
         if (statsTracker.itemsEatenText != null)
         {
             bool visible = statsTracker.itemsEatenText.gameObject.activeInHierarchy;
-            Debug.Log($"[ВИДИМОСТЬ] ItemsEatenText: активен={visible}, текст='{statsTracker.itemsEatenText.text}'");
+            Debug.Log($"[VISIBILITY] ItemsEatenText: active={visible}, text='{statsTracker.itemsEatenText.text}'");
         }
         else
         {
-            Debug.Log("[ВИДИМОСТЬ] ItemsEatenText: НЕ НАЗНАЧЕН");
+            Debug.Log("[VISIBILITY] ItemsEatenText: NOT ASSIGNED");
         }
         
         // Check TextMeshPro components
         if (statsTracker.maxSpeedTextTMP != null)
         {
             bool visible = statsTracker.maxSpeedTextTMP.gameObject.activeInHierarchy;
-            Debug.Log($"[ВИДИМОСТЬ] MaxSpeedTextTMP: активен={visible}, текст='{statsTracker.maxSpeedTextTMP.text}'");
+            Debug.Log($"[VISIBILITY] MaxSpeedTextTMP: active={visible}, text='{statsTracker.maxSpeedTextTMP.text}'");
         }
         else
         {
-            Debug.Log("[ВИДИМОСТЬ] MaxSpeedTextTMP: НЕ НАЗНАЧЕН");
+            Debug.Log("[VISIBILITY] MaxSpeedTextTMP: NOT ASSIGNED");
         }
         
         if (statsTracker.itemsEatenTextTMP != null)
         {
             bool visible = statsTracker.itemsEatenTextTMP.gameObject.activeInHierarchy;
-            Debug.Log($"[ВИДИМОСТЬ] ItemsEatenTextTMP: активен={visible}, текст='{statsTracker.itemsEatenTextTMP.text}'");
+            Debug.Log($"[VISIBILITY] ItemsEatenTextTMP: active={visible}, text='{statsTracker.itemsEatenTextTMP.text}'");
         }
         else
         {
-            Debug.Log("[ВИДИМОСТЬ] ItemsEatenTextTMP: НЕ НАЗНАЧЕН");
+            Debug.Log("[VISIBILITY] ItemsEatenTextTMP: NOT ASSIGNED");
         }
     }
     
@@ -436,7 +436,7 @@ public class DeathSystemDiagnostics : MonoBehaviour
         GameStatsTracker statsTracker = GameStatsTracker.Instance;
         if (statsTracker != null)
         {
-            Debug.Log("[ПРИНУДИТЕЛЬНО] Показываю статистику...");
+            Debug.Log("[FORCE] Showing statistics...");
             
             // Add some test data if none exists
             if (statsTracker.MaxSpeedReached == 0f)
@@ -451,19 +451,19 @@ public class DeathSystemDiagnostics : MonoBehaviour
             // Force show statistics
             statsTracker.ShowStatistics();
             
-            Debug.Log("[ПРИНУДИТЕЛЬНО] Статистика показана!");
+            Debug.Log("[FORCE] Statistics shown!");
             CheckStatisticsVisibility();
         }
         else
         {
-            Debug.LogError("[ПРИНУДИТЕЛЬНО] GameStatsTracker не найден!");
+            Debug.LogError("[FORCE] GameStatsTracker not found!");
         }
     }
     
     [ContextMenu("Quick Setup Death System")]
     public void QuickSetupDeathSystem()
     {
-        Debug.Log("=== БЫСТРАЯ НАСТРОЙКА СИСТЕМЫ СМЕРТИ ===");
+        Debug.Log("=== QUICK DEATH SYSTEM SETUP ===");
         
         // Find or create AdvancedDeathController
         AdvancedDeathController deathController = FindObjectOfType<AdvancedDeathController>();
@@ -471,7 +471,7 @@ public class DeathSystemDiagnostics : MonoBehaviour
         {
             GameObject deathGO = new GameObject("AdvancedDeathController");
             deathController = deathGO.AddComponent<AdvancedDeathController>();
-            Debug.Log("[НАСТРОЙКА] Создан AdvancedDeathController");
+            Debug.Log("[SETUP] Created AdvancedDeathController");
         }
         
         // Setup the system
@@ -483,10 +483,10 @@ public class DeathSystemDiagnostics : MonoBehaviour
         {
             GameObject statsGO = new GameObject("GameStatsTracker");
             statsTracker = statsGO.AddComponent<GameStatsTracker>();
-            Debug.Log("[НАСТРОЙКА] Создан GameStatsTracker");
+            Debug.Log("[SETUP] Created GameStatsTracker");
         }
         
-        Debug.Log("=== БЫСТРАЯ НАСТРОЙКА ЗАВЕРШЕНА ===");
+        Debug.Log("=== QUICK DEATH SYSTEM SETUP COMPLETE ===");
         
         // Run diagnostic
         PerformFullDiagnostic();

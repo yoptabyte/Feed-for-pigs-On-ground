@@ -143,6 +143,18 @@ public partial class PlayerStatusEffectSystem : SystemBase
                             }
                             break;
 
+                        case EffectType.Slowed:
+                            if (movementData != null)
+                            {
+                                movementData.moveSpeed = effect.OriginalValue * effect.EffectStrength;
+                                Debug.Log($"StatusEffect: Slowed applied. New speed: {movementData.moveSpeed} (base: {effect.OriginalValue}, multiplier: {effect.EffectStrength})");
+                            }
+                            else
+                            {
+                                Debug.LogWarning($"Effect {effect.Type} requires MovementData component, but none was found on entity {entity}.");
+                            }
+                            break;
+
                     }
                 }
 
@@ -168,6 +180,13 @@ public partial class PlayerStatusEffectSystem : SystemBase
                                 if (Mathf.Approximately(movementData.jumpForce, effect.OriginalValue * effect.EffectStrength))
                                 {
                                     movementData.jumpForce = effect.OriginalValue;
+                                }
+                                break;
+                            case EffectType.Slowed:
+                                if (Mathf.Approximately(movementData.moveSpeed, effect.OriginalValue * effect.EffectStrength))
+                                {
+                                    movementData.moveSpeed = effect.OriginalValue;
+                                    Debug.Log($"StatusEffect: Slowed effect expired. Speed restored to: {movementData.moveSpeed}");
                                 }
                                 break;
                         }

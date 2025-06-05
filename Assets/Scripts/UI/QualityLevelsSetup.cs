@@ -9,7 +9,7 @@ public class QualityLevelsSetup : MonoBehaviour
     {
         Debug.Log("Setting up quality levels...");
         
-        // Получаем текущие настройки качества
+        // Get current quality settings
         string[] currentNames = QualitySettings.names;
         Debug.Log($"Current quality levels: {currentNames.Length}");
         

@@ -14,14 +14,14 @@ public class MainMenuManager : MonoBehaviour
     public string gameSceneName = "New Scene1"; // Main game scene name
     
     [Header("Cursor Settings")]
-    [Tooltip("Показывать курсор в главном меню")]
+    [Tooltip("Show cursor in main menu")]
     public bool showCursorInMenu = true;
     
-    [Tooltip("Разблокировать курсор в главном меню")]
+    [Tooltip("Unlock cursor in main menu")]
     public bool unlockCursorInMenu = true;
     
     [Header("Debug")]
-    [Tooltip("Показывать отладочную информацию")]
+    [Tooltip("Show debug information")]
     public bool showDebugInfo = false;
     
     private void Start()
@@ -66,7 +66,7 @@ public class MainMenuManager : MonoBehaviour
             
         if (showDebugInfo)
         {
-            Debug.Log($"MainMenuManager: Инициализация завершена. Курсор: Visible={Cursor.visible}, LockState={Cursor.lockState}");
+            Debug.Log($"MainMenuManager: Initialization completed. Cursor: Visible={Cursor.visible}, LockState={Cursor.lockState}");
         }
     }
     
@@ -75,24 +75,44 @@ public class MainMenuManager : MonoBehaviour
         if (showCursorInMenu)
         {
             Cursor.visible = true;
-            if (showDebugInfo) Debug.Log("MainMenuManager: Курсор включен");
+            if (showDebugInfo) Debug.Log("MainMenuManager: Cursor enabled");
         }
         
         if (unlockCursorInMenu)
         {
             Cursor.lockState = CursorLockMode.None;
-            if (showDebugInfo) Debug.Log("MainMenuManager: Курсор разблокирован");
+            if (showDebugInfo) Debug.Log("MainMenuManager: Cursor unlocked");
         }
         
         if (showDebugInfo)
         {
-            Debug.Log($"MainMenuManager: Настройка курсора завершена - Visible: {Cursor.visible}, LockState: {Cursor.lockState}");
+            Debug.Log($"MainMenuManager: Cursor setup completed - Visible: {Cursor.visible}, LockState: {Cursor.lockState}");
         }
+    }
+
+    private void SetMainMenuButtonsActive(bool active)
+    {
+        if (newGameButton != null)
+            newGameButton.gameObject.SetActive(active);
+        if (optionsButton != null)
+            optionsButton.gameObject.SetActive(active);
+        if (quitButton != null)
+            quitButton.gameObject.SetActive(active);
+            
+        if (showDebugInfo)
+            Debug.Log($"Main menu buttons set to: {(active ? "visible" : "hidden")}");
     }
     
     public void StartNewGame()
     {
         if (showDebugInfo) Debug.Log("StartNewGame called, loading scene: " + gameSceneName);
+        
+        // Reset game statistics before starting new game
+        if (GameStatsTracker.Instance != null)
+        {
+            GameStatsTracker.Instance.ResetStats();
+            if (showDebugInfo) Debug.Log("Game statistics reset for new game");
+        }
         
         // Check if scene exists in build settings
         if (Application.CanStreamedLevelBeLoaded(gameSceneName))
@@ -117,14 +137,20 @@ public class MainMenuManager : MonoBehaviour
     {
         if (showDebugInfo) Debug.Log("Opening options panel");
         if (optionsPanel != null)
+        {
             optionsPanel.SetActive(true);
+            SetMainMenuButtonsActive(false); // Disable main menu buttons when options are open
+        }
     }
     
     public void CloseOptions()
     {
         if (showDebugInfo) Debug.Log("Closing options panel");
         if (optionsPanel != null)
+        {
             optionsPanel.SetActive(false);
+            SetMainMenuButtonsActive(true); // Enable main menu buttons when options are closed
+        }
     }
     
     public void QuitGame()
@@ -142,6 +168,14 @@ public class MainMenuManager : MonoBehaviour
     public void StartNewGameByIndex()
     {
         if (showDebugInfo) Debug.Log("Loading game scene by index 1");
+        
+        // Reset game statistics before starting new game
+        if (GameStatsTracker.Instance != null)
+        {
+            GameStatsTracker.Instance.ResetStats();
+            if (showDebugInfo) Debug.Log("Game statistics reset for new game (by index)");
+        }
+        
         SceneManager.LoadScene(1);
     }
     
@@ -150,13 +184,13 @@ public class MainMenuManager : MonoBehaviour
     public void TestSetupCursor()
     {
         SetupMainMenuCursor();
-        Debug.Log($"MainMenuManager: Тест настройки курсора - Visible: {Cursor.visible}, LockState: {Cursor.lockState}");
+        Debug.Log($"MainMenuManager: Cursor setup test - Visible: {Cursor.visible}, LockState: {Cursor.lockState}");
     }
     
     [ContextMenu("Show Cursor Info")]
     public void ShowCursorInfo()
     {
-        Debug.Log($"MainMenuManager: Текущее состояние курсора - Visible: {Cursor.visible}, LockState: {Cursor.lockState}");
+        Debug.Log($"MainMenuManager: Current cursor state - Visible: {Cursor.visible}, LockState: {Cursor.lockState}");
     }
     
     void OnEnable()

@@ -3,38 +3,38 @@ using UnityEngine;
 public class SpriteSpeedometerController : MonoBehaviour
 {
     [Header("Speedometer Settings")]
-    [Tooltip("Стрелка спидометра (SpriteRenderer)")]
+    [Tooltip("Speedometer needle (SpriteRenderer)")]
     public Transform speedometerNeedle;
     
-    [Tooltip("Игрок или объект с MovementSystem")]
+    [Tooltip("Player or object with MovementSystem")]
     public Transform player;
     
     [Header("Rotation Settings")]
-    [Tooltip("Минимальный угол поворота стрелки (в градусах)")]
+    [Tooltip("Minimum needle rotation angle (in degrees)")]
     public float minAngle = -90f;
     
-    [Tooltip("Максимальный угол поворота стрелки (в градусах)")]
+    [Tooltip("Maximum needle rotation angle (in degrees)")]
     public float maxAngle = 90f;
     
-    [Tooltip("Максимальная скорость для отображения")]
+    [Tooltip("Maximum speed to display")]
     public float maxSpeed = 100f;
     
     [Header("Pivot Settings")]
-    [Tooltip("Смещение центра вращения по X (в юнитах)")]
+    [Tooltip("Rotation center offset on X axis (in units)")]
     public float pivotOffsetX = 0f;
     
-    [Tooltip("Смещение центра вращения по Y (в юнитах)")]
+    [Tooltip("Rotation center offset on Y axis (in units)")]
     public float pivotOffsetY = -0.5f;
     
-    [Tooltip("Создать дочерний объект для правильного поворота")]
+    [Tooltip("Create child object for proper rotation")]
     public bool createPivotChild = true;
     
     [Header("Smooth Animation")]
-    [Tooltip("Плавность анимации стрелки")]
+    [Tooltip("Needle animation smoothness")]
     public float smoothSpeed = 5f;
     
     [Header("Debug")]
-    [Tooltip("Показывать отладочную информацию")]
+    [Tooltip("Show debug information")]
     public bool showDebugInfo = false;
     
     // Private variables
@@ -82,7 +82,7 @@ public class SpriteSpeedometerController : MonoBehaviour
             
             if (speedometerNeedle == null)
             {
-                Debug.LogError("SpriteSpeedometerController: Стрелка спидометра не найдена! Назначьте её в поле 'speedometerNeedle'");
+                Debug.LogError("SpriteSpeedometerController: Speedometer needle not found! Assign it to the 'speedometerNeedle' field");
                 return;
             }
         }
@@ -92,7 +92,7 @@ public class SpriteSpeedometerController : MonoBehaviour
         
         if (needleSpriteRenderer == null)
         {
-            Debug.LogError("SpriteSpeedometerController: SpriteRenderer не найден на стрелке спидометра!");
+            Debug.LogError("SpriteSpeedometerController: SpriteRenderer not found on speedometer needle!");
             return;
         }
         
@@ -112,7 +112,7 @@ public class SpriteSpeedometerController : MonoBehaviour
                 if (movementDatas.Length > 0)
                 {
                     player = movementDatas[0].transform;
-                    Debug.Log($"SpriteSpeedometerController: Найден объект с MovementData: {player.name}");
+                    Debug.Log($"SpriteSpeedometerController: Found object with MovementData: {player.name}");
                 }
             }
         }
@@ -125,17 +125,17 @@ public class SpriteSpeedometerController : MonoBehaviour
             
             if (playerRigidbody == null)
             {
-                Debug.LogWarning("SpriteSpeedometerController: Rigidbody не найден на игроке");
+                Debug.LogWarning("SpriteSpeedometerController: Rigidbody not found on player");
             }
             
             if (playerMovementData == null)
             {
-                Debug.LogWarning("SpriteSpeedometerController: MovementData не найден на игроке");
+                Debug.LogWarning("SpriteSpeedometerController: MovementData not found on player");
             }
         }
         else
         {
-            Debug.LogError("SpriteSpeedometerController: Игрок не найден! Назначьте его в поле 'player'");
+            Debug.LogError("SpriteSpeedometerController: Player not found! Assign it to the 'player' field");
         }
     }
     
@@ -165,13 +165,13 @@ public class SpriteSpeedometerController : MonoBehaviour
             // Adjust needle position relative to pivot
             speedometerNeedle.localPosition = new Vector3(-pivotOffsetX, -pivotOffsetY, 0);
             
-            Debug.Log($"SpriteSpeedometerController: Создан pivot объект с смещением ({pivotOffsetX}, {pivotOffsetY})");
+            Debug.Log($"SpriteSpeedometerController: Created pivot object with offset ({pivotOffsetX}, {pivotOffsetY})");
         }
         else
         {
             // Use needle transform directly with offset
             pivotTransform = speedometerNeedle;
-            Debug.Log("SpriteSpeedometerController: Используется прямой поворот стрелки");
+            Debug.Log("SpriteSpeedometerController: Using direct needle rotation");
         }
         
         pivotSetup = true;

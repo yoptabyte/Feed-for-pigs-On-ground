@@ -4,34 +4,34 @@ using UnityEngine.UI;
 public class SpeedometerController : MonoBehaviour
 {
     [Header("Speedometer Settings")]
-    [Tooltip("Стрелка спидометра (объект для вращения)")]
+    [Tooltip("Speedometer needle (object to rotate)")]
     public Transform speedometerNeedle;
     
-    [Tooltip("Игрок или объект с MovementSystem")]
+    [Tooltip("Player or object with MovementSystem")]
     public Transform player;
     
     [Header("Rotation Settings")]
-    [Tooltip("Минимальный угол поворота стрелки (в градусах)")]
+    [Tooltip("Minimum needle rotation angle (in degrees)")]
     public float minAngle = -90f;
     
-    [Tooltip("Максимальный угол поворота стрелки (в градусах)")]
+    [Tooltip("Maximum needle rotation angle (in degrees)")]
     public float maxAngle = 90f;
     
-    [Tooltip("Максимальная скорость для отображения")]
+    [Tooltip("Maximum speed to display")]
     public float maxSpeed = 100f;
     
     [Header("Pivot Settings")]
-    [Tooltip("Смещение центра вращения по X (в пикселях)")]
+    [Tooltip("Rotation center offset on X axis (in pixels)")]
     public float pivotOffsetX = 0f;
     
-    [Tooltip("Смещение центра вращения по Y (в пикселях)")]
+    [Tooltip("Rotation center offset on Y axis (in pixels)")]
     public float pivotOffsetY = -50f;
     
-    [Tooltip("Автоматически настроить pivot при старте")]
+    [Tooltip("Automatically setup pivot on start")]
     public bool autoSetPivot = true;
     
     [Header("Debug")]
-    [Tooltip("Показывать отладочную информацию")]
+    [Tooltip("Show debug information")]
     public bool showDebugInfo = false;
     
     // Private variables
@@ -67,7 +67,7 @@ public class SpeedometerController : MonoBehaviour
             speedometerNeedle = transform.Find("speed");
             if (speedometerNeedle == null)
             {
-                Debug.LogError("SpeedometerController: Стрелка спидометра не найдена! Назначьте её в поле 'speedometerNeedle'");
+                Debug.LogError("SpeedometerController: Speedometer needle not found! Assign it to the 'speedometerNeedle' field");
                 return;
             }
         }
@@ -97,7 +97,7 @@ public class SpeedometerController : MonoBehaviour
                 if (movementDatas.Length > 0)
                 {
                     player = movementDatas[0].transform;
-                    Debug.Log($"SpeedometerController: Найден объект с MovementData: {player.name}");
+                    Debug.Log($"SpeedometerController: Found object with MovementData: {player.name}");
                 }
             }
         }
@@ -110,17 +110,17 @@ public class SpeedometerController : MonoBehaviour
             
             if (playerRigidbody == null)
             {
-                Debug.LogWarning("SpeedometerController: Rigidbody не найден на игроке");
+                Debug.LogWarning("SpeedometerController: Rigidbody not found on player");
             }
             
             if (playerMovementData == null)
             {
-                Debug.LogWarning("SpeedometerController: MovementData не найден на игроке");
+                Debug.LogWarning("SpeedometerController: MovementData not found on player");
             }
         }
         else
         {
-            Debug.LogError("SpeedometerController: Игрок не найден! Назначьте его в поле 'player'");
+            Debug.LogError("SpeedometerController: Player not found! Assign it to the 'player' field");
         }
     }
     
@@ -141,7 +141,7 @@ public class SpeedometerController : MonoBehaviour
         
         needleRectTransform.pivot = newPivot;
         
-        Debug.Log($"SpeedometerController: Pivot изменён с {originalPivot} на {newPivot}");
+        Debug.Log($"SpeedometerController: Pivot changed from {originalPivot} to {newPivot}");
     }
     
     private void UpdateSpeed()

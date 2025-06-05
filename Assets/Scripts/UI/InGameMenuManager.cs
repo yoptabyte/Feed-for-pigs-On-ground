@@ -15,6 +15,9 @@ public class InGameMenuManager : MonoBehaviour
     public Button mainMenuButton;
     public Button quitButton;
     
+    [Header("Settings Panel Buttons")]
+    public Button settingsMainMenuButton; // Main Menu button in settings panel
+    
     [Header("Settings")]
     public SettingsManager settingsManager;
     
@@ -105,7 +108,7 @@ public class InGameMenuManager : MonoBehaviour
             }
         }
         
-        // Find buttons
+        // Find pause menu buttons
         if (resumeButton == null)
         {
             resumeButton = FindChildComponent<Button>("ResumeButton");
@@ -128,6 +131,24 @@ public class InGameMenuManager : MonoBehaviour
         {
             quitButton = FindChildComponent<Button>("QuitButton");
             if (quitButton != null) Debug.Log("Found QuitButton");
+        }
+        
+        // Find settings panel buttons
+        if (settingsMainMenuButton == null)
+        {
+            // Try to find MainMenuButton specifically in settings panel
+            if (settingsPanel != null)
+            {
+                settingsMainMenuButton = FindComponentInPanel<Button>(settingsPanel.transform, "MainMenuButton");
+                if (settingsMainMenuButton != null) Debug.Log("Found MainMenuButton in SettingsPanel");
+            }
+            
+            // If not found in settings panel, try alternative names
+            if (settingsMainMenuButton == null)
+            {
+                settingsMainMenuButton = FindChildComponent<Button>("SettingsMainMenuButton");
+                if (settingsMainMenuButton != null) Debug.Log("Found SettingsMainMenuButton");
+            }
         }
         
         // Find settings manager
@@ -185,6 +206,26 @@ public class InGameMenuManager : MonoBehaviour
         
         return null;
     }
+
+    private T FindComponentInPanel<T>(Transform panelTransform, string childName) where T : Component
+    {
+        Transform child = panelTransform.Find(childName);
+        if (child == null)
+        {
+            child = FindChildRecursive(panelTransform, childName);
+        }
+        
+        if (child != null)
+        {
+            T component = child.GetComponent<T>();
+            if (component != null)
+            {
+                return component;
+            }
+        }
+        
+        return null;
+    }
     
     private Transform FindChildRecursive(Transform parent, string childName)
     {
@@ -209,6 +250,7 @@ public class InGameMenuManager : MonoBehaviour
         Debug.Log($"Resume Button: {(resumeButton != null ? "✓" : "✗")}");
         Debug.Log($"Settings Button: {(settingsButton != null ? "✓" : "✗")}");
         Debug.Log($"Main Menu Button: {(mainMenuButton != null ? "✓" : "✗")}");
+        Debug.Log($"Settings Main Menu Button: {(settingsMainMenuButton != null ? "✓" : "✗")}");
         Debug.Log($"Quit Button: {(quitButton != null ? "✓" : "✗")}");
         Debug.Log($"Settings Manager: {(settingsManager != null ? "✓" : "✗")}");
         Debug.Log("=== END VALIDATION ===");
@@ -227,6 +269,10 @@ public class InGameMenuManager : MonoBehaviour
             
         if (quitButton != null)
             quitButton.onClick.AddListener(QuitGame);
+            
+        // Setup settings panel main menu button
+        if (settingsMainMenuButton != null)
+            settingsMainMenuButton.onClick.AddListener(ReturnToMainMenu);
     }
     
     public void PauseGame()
@@ -319,7 +365,7 @@ public class InGameMenuManager : MonoBehaviour
         Cursor.visible = true;
         Cursor.lockState = CursorLockMode.None;
         
-        Debug.Log($"InGameMenuManager: Курсор подготовлен для главного меню - Visible: {Cursor.visible}, LockState: {Cursor.lockState}");
+        Debug.Log($"InGameMenuManager: Cursor prepared for main menu - Visible: {Cursor.visible}, LockState: {Cursor.lockState}");
         
         // Load main menu scene
         if (!string.IsNullOrEmpty(mainMenuSceneName))

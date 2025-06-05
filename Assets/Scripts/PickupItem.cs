@@ -227,8 +227,9 @@ public class PickupItem : MonoBehaviour
 
         if (effectType == EffectType.Regeneration && playerHealth != null)
         {
+            playerHealth.InstantHeal(1);
             playerHealth.EnableRegeneration();
-            Debug.Log($"PickupItem: Called EnableRegeneration() on {playerHealth.gameObject.name} for entity {playerEntity}.");
+            Debug.Log($"PickupItem: Applied instant healing and enabled regeneration on {playerHealth.gameObject.name} for entity {playerEntity}.");
         }
 
         if (movementData != null && (effectType == EffectType.SpeedBoost || effectType == EffectType.TurnSpeedBoost || effectType == EffectType.JumpHeightBoost))
@@ -335,11 +336,11 @@ public class PickupItem : MonoBehaviour
             string itemName = gameObject.name;
             statsTracker.AddItemEaten(itemName);
             
-            Debug.Log($"PickupItem: Зарегистрирован подбор предмета '{itemName}' игроком {pickedUpBy.name}");
+            Debug.Log($"PickupItem: Registered pickup of item '{itemName}' by player {pickedUpBy.name}");
         }
         else
         {
-            Debug.LogWarning($"PickupItem: GameStatsTracker не найден для предмета {gameObject.name}");
+            Debug.LogWarning($"PickupItem: GameStatsTracker not found for item {gameObject.name}");
         }
     }
 

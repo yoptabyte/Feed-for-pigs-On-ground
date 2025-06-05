@@ -129,7 +129,14 @@ public class HealthUI : MonoBehaviour
     private void OnPlayerDamageTaken(int damage)
     {
         UpdateHealthDisplay();
-        Debug.Log($"HealthUI: Player took {damage} damage. Updating display.");
+        if (damage < 0)
+        {
+            Debug.Log($"HealthUI: Player healed {-damage} HP. Updating display.");
+        }
+        else
+        {
+            Debug.Log($"HealthUI: Player took {damage} damage. Updating display.");
+        }
     }
     
     private void OnPlayerDeath()

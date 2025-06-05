@@ -8,12 +8,15 @@ public struct PlayerTag : IComponentData { }
 // Authoring component to add PlayerTag and configure EntityLink
 public class PlayerTagAuthoring : MonoBehaviour
 {
-    // Debug info - проверка в Start
+    // Debug info - check in Start
+    private bool debugInfo = true;
+
+    // Debug info - check in Start
     private void Start()
     {
         Debug.Log($"[PlayerTagAuthoring] Start called on {gameObject.name}");
         
-        // Получить или создать EntityLink
+        // Get or create EntityLink
         var entityLink = GetComponent<EntityLink>();
         if (entityLink == null)
         {
@@ -25,24 +28,24 @@ public class PlayerTagAuthoring : MonoBehaviour
             Debug.Log($"[PlayerTagAuthoring] Start - EntityLink present on {gameObject.name}. Entity: {entityLink.Entity}. Is Entity.Null? {entityLink.Entity == Entity.Null}");
         }
 
-        // Ручное создание Entity, если бэйкинг не сработал
+        // Manual Entity creation if baking didn't work
         if (entityLink.Entity == Entity.Null)
         {
             Debug.LogWarning($"[PlayerTagAuthoring] Entity is null. Attempting manual entity creation...");
             
-            // Проверка, что мир ECS существует
+            // Check that the ECS world exists
             var world = World.DefaultGameObjectInjectionWorld;
             if (world != null)
             {
                 var entityManager = world.EntityManager;
                 
-                // Ручное создание сущности
+                // Manual entity creation
                 var entity = entityManager.CreateEntity();
                 
-                // Добавить компонент PlayerTag
+                // Add PlayerTag component
                 entityManager.AddComponentData(entity, new PlayerTag());
                 
-                // Присвоить созданную сущность компоненту EntityLink
+                // Assign created entity to EntityLink component
                 entityLink.Entity = entity;
                 
                 Debug.Log($"[PlayerTagAuthoring] Manually created Entity {entity} and assigned to EntityLink on {gameObject.name}");
@@ -53,16 +56,16 @@ public class PlayerTagAuthoring : MonoBehaviour
             }
         }
         
-        // Попытка найти существующую сущность с PlayerTag (если ручное создание не сработало)
+        // Try to find existing entity with PlayerTag (if manual creation didn't work)
         if (entityLink.Entity == Entity.Null)
         {
-            // Пробуем принудительно найти существующую сущность с PlayerTag
+            // Try to force find existing entity with PlayerTag
             var world = World.DefaultGameObjectInjectionWorld;
             if (world != null)
             {
                 var entityManager = world.EntityManager;
                 
-                // Создадим запрос для поиска сущности с PlayerTag
+                // Create query to search for entity with PlayerTag
                 var query = entityManager.CreateEntityQuery(typeof(PlayerTag));
                 
                 if (query.CalculateEntityCount() > 0)
@@ -72,12 +75,12 @@ public class PlayerTagAuthoring : MonoBehaviour
                     
                     if (playerEntities.Length > 0)
                     {
-                        // Использовать первую найденную сущность игрока
+                        // Use first found player entity
                         entityLink.Entity = playerEntities[0];
                         Debug.Log($"[PlayerTagAuthoring] Manually assigned Entity {playerEntities[0]} to EntityLink on {gameObject.name}");
                     }
                     
-                    // Освободить память
+                    // Free memory
                     playerEntities.Dispose();
                 }
                 else
@@ -87,7 +90,7 @@ public class PlayerTagAuthoring : MonoBehaviour
             }
         }
         
-        // Финальная проверка
+        // Final check
         if (entityLink.Entity == Entity.Null)
         {
             Debug.LogError($"[PlayerTagAuthoring] Failed to obtain a valid Entity for {gameObject.name}. Pickup may still not work!");

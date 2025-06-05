@@ -20,6 +20,7 @@ public class SettingsManager : MonoBehaviour
     public Button applyButton;
     public Button resetButton;
     public Button closeButton;
+    public Button mainMenuButton; // Main Menu button for settings panel
     
     [Header("Panel Management")]
     public bool isInGameSettings = false; // True if this is in-game settings panel
@@ -105,6 +106,12 @@ public class SettingsManager : MonoBehaviour
             closeButton = FindChildComponent<Button>("CloseButton");
             if (closeButton != null) Debug.Log("Found CloseButton");
         }
+        
+        if (mainMenuButton == null)
+        {
+            mainMenuButton = FindChildComponent<Button>("MainMenuButton");
+            if (mainMenuButton != null) Debug.Log("Found MainMenuButton");
+        }
     }
     
     private T FindChildComponent<T>(string childName) where T : Component
@@ -162,6 +169,7 @@ public class SettingsManager : MonoBehaviour
         Debug.Log($"Apply Button: {(applyButton != null ? "✓" : "✗")}");
         Debug.Log($"Reset Button: {(resetButton != null ? "✓" : "✗")}");
         Debug.Log($"Close Button: {(closeButton != null ? "✓" : "✗")}");
+        Debug.Log($"Main Menu Button: {(mainMenuButton != null ? "✓" : "✗")}");
         Debug.Log($"Audio Mixer: {(audioMixer != null ? "✓" : "✗")}");
         Debug.Log("=== END VALIDATION ===");
     }
@@ -177,6 +185,9 @@ public class SettingsManager : MonoBehaviour
             
         if (closeButton != null)
             closeButton.onClick.AddListener(CloseSettings);
+            
+        if (mainMenuButton != null)
+            mainMenuButton.onClick.AddListener(ReturnToMainMenu);
             
         // Setup UI listeners
         if (qualityDropdown != null)
@@ -236,28 +247,28 @@ public class SettingsManager : MonoBehaviour
         {
             qualityDropdown.ClearOptions();
             
-            // Проверяем количество доступных уровней качества
-            if (QualitySettings.names.Length <= 1)
+            // Check the number of available quality levels
+            if (QualitySettings.names.Length > 1)
+            {
+                qualityDropdown.AddOptions(new List<string>(QualitySettings.names));
+                qualityDropdown.value = QualitySettings.GetQualityLevel();
+            }
+            else
             {
                 Debug.LogWarning("Only 1 quality level found! Consider adding more quality levels in Project Settings > Quality");
                 Debug.LogWarning("Go to Edit > Project Settings > Quality to add more quality levels");
                 
-                // Создаем базовые опции если их нет
+                // Create basic options if there are none
                 List<string> fallbackOptions = new List<string> { "Low", "Medium", "High" };
                 qualityDropdown.AddOptions(fallbackOptions);
                 qualityDropdown.value = 0;
-            }
-            else
-            {
-                qualityDropdown.AddOptions(new List<string>(QualitySettings.names));
-                qualityDropdown.value = QualitySettings.GetQualityLevel();
             }
             
             qualityDropdown.RefreshShownValue();
             
             Debug.Log($"Setup {QualitySettings.names.Length} quality options from Unity Quality Settings");
             
-            // Выводим доступные уровни качества
+            // Output available quality levels
             for (int i = 0; i < QualitySettings.names.Length; i++)
             {
                 Debug.Log($"  Quality Level {i}: {QualitySettings.names[i]}");
@@ -322,13 +333,13 @@ public class SettingsManager : MonoBehaviour
     
     public void OnQualityChanged(int qualityIndex)
     {
-        // Если у нас только один уровень качества в Unity, но dropdown имеет больше опций
-        if (QualitySettings.names.Length <= 1 && qualityDropdown != null && qualityDropdown.options.Count > 1)
+        // If we only have one quality level in Unity, but dropdown has more options
+        if (QualitySettings.names.Length == 1 && qualityDropdown.options.Count > 1)
         {
             Debug.LogWarning($"Trying to set quality to index {qualityIndex}, but Unity only has {QualitySettings.names.Length} quality level(s)");
             Debug.LogWarning("Using fallback quality simulation. Add more quality levels in Project Settings > Quality for full functionality");
             
-            // Симулируем изменение качества через изменение отдельных настроек
+            // Simulate quality change through individual settings changes
             SimulateQualityChange(qualityIndex);
             return;
         }
@@ -347,11 +358,12 @@ public class SettingsManager : MonoBehaviour
         }
     }
     
-    // Симуляция изменения качества когда у нас ограниченные настройки Unity
+    // Simulate quality change when we have limited Unity settings
     private void SimulateQualityChange(int qualityIndex)
     {
         Debug.Log($"Simulating quality change to level {qualityIndex}");
         
+        // Simulate quality change through individual settings changes
         switch (qualityIndex)
         {
             case 0: // Low Quality
@@ -386,8 +398,8 @@ public class SettingsManager : MonoBehaviour
                 break;
         }
         
-        // Сохраняем симулированный уровень качества
-        PlayerPrefs.SetInt("QualityLevel", qualityIndex);
+        // Save simulated quality level
+        PlayerPrefs.SetInt("SimulatedQualityLevel", qualityIndex);
     }
     
     public void OnResolutionChanged(int resolutionIndex)
@@ -525,6 +537,31 @@ public class SettingsManager : MonoBehaviour
             {
                 mainMenu.CloseOptions();
             }
+        }
+    }
+    
+    public void ReturnToMainMenu()
+    {
+        Debug.Log("ReturnToMainMenu called from SettingsManager");
+        
+        if (isInGameSettings)
+        {
+            // If we're in-game, use the InGameMenuManager to return to main menu
+            InGameMenuManager inGameMenu = FindObjectOfType<InGameMenuManager>();
+            if (inGameMenu != null)
+            {
+                inGameMenu.ReturnToMainMenu();
+            }
+            else
+            {
+                Debug.LogError("InGameMenuManager not found! Cannot return to main menu.");
+            }
+        }
+        else
+        {
+            Debug.LogWarning("ReturnToMainMenu called from main menu settings - this shouldn't happen");
+            // Close settings if we're in main menu
+            CloseSettings();
         }
     }
     

@@ -18,10 +18,17 @@ public class Tripwire : MonoBehaviour
     {
         if (isTriggered) return;
 
+        // Only react to Player, ignore enemies
+        if (!other.CompareTag("PlayerTag"))
+        {
+            Debug.Log($"Tripwire ignored {other.gameObject.name} (not Player)");
+            return;
+        }
+
         Health targetHealth = other.GetComponent<Health>();
         if (targetHealth != null && targetHealth.IsAlive)
         {
-            Debug.Log($"Tripwire triggered by {other.gameObject.name}");
+            Debug.Log($"Tripwire triggered by Player: {other.gameObject.name}");
             isTriggered = true;
             OnTripwireTriggered?.Invoke(other.gameObject); 
             // gameObject.SetActive(false);

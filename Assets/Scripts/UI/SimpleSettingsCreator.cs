@@ -67,7 +67,7 @@ public class SimpleSettingsCreator : MonoBehaviour
         rect.offsetMax = Vector2.zero;
         
         // Create title
-        GameObject title = CreateText("Title", "ПАУЗА", pausePanel.transform);
+        GameObject title = CreateText("Title", "PAUSE", pausePanel.transform);
         RectTransform titleRect = title.GetComponent<RectTransform>();
         titleRect.anchorMin = new Vector2(0.5f, 0.8f);
         titleRect.anchorMax = new Vector2(0.5f, 0.8f);
@@ -79,10 +79,10 @@ public class SimpleSettingsCreator : MonoBehaviour
         titleText.fontStyle = FontStyle.Bold;
         
         // Create buttons
-        CreateButton("ResumeButton", "ПРОДОЛЖИТЬ", pausePanel.transform, new Vector2(0, 50));
-        CreateButton("SettingsButton", "НАСТРОЙКИ", pausePanel.transform, new Vector2(0, 0));
-        CreateButton("MainMenuButton", "ГЛАВНОЕ МЕНЮ", pausePanel.transform, new Vector2(0, -50));
-        CreateButton("QuitButton", "ВЫХОД", pausePanel.transform, new Vector2(0, -100));
+        CreateButton("ResumeButton", "RESUME", pausePanel.transform, new Vector2(0, 50));
+        CreateButton("SettingsButton", "SETTINGS", pausePanel.transform, new Vector2(0, 0));
+        CreateButton("MainMenuButton", "MAIN MENU", pausePanel.transform, new Vector2(0, -50));
+        CreateButton("QuitButton", "QUIT", pausePanel.transform, new Vector2(0, -100));
         
         pausePanel.SetActive(false);
         return pausePanel;
@@ -110,7 +110,7 @@ public class SimpleSettingsCreator : MonoBehaviour
         settingsManager.autoFindComponents = false; // We'll assign manually
         
         // Create title
-        GameObject title = CreateText("Title", "НАСТРОЙКИ", settingsPanel.transform);
+        GameObject title = CreateText("Title", "SETTINGS", settingsPanel.transform);
         RectTransform titleRect = title.GetComponent<RectTransform>();
         titleRect.anchorMin = new Vector2(0.5f, 0.9f);
         titleRect.anchorMax = new Vector2(0.5f, 0.9f);
@@ -123,35 +123,35 @@ public class SimpleSettingsCreator : MonoBehaviour
         
         // Create graphics section
         float yPos = 200;
-        CreateText("GraphicsLabel", "ГРАФИКА", settingsPanel.transform, new Vector2(0, yPos), 24);
+        CreateText("GraphicsLabel", "GRAPHICS", settingsPanel.transform, new Vector2(0, yPos), 24);
         
         yPos -= 50;
-        GameObject qualityDropdown = CreateDropdown("QualityDropdown", "Качество:", settingsPanel.transform, new Vector2(0, yPos));
+        GameObject qualityDropdown = CreateDropdown("QualityDropdown", "Quality:", settingsPanel.transform, new Vector2(0, yPos));
         
         yPos -= 50;
-        GameObject resolutionDropdown = CreateDropdown("ResolutionDropdown", "Разрешение:", settingsPanel.transform, new Vector2(0, yPos));
+        GameObject resolutionDropdown = CreateDropdown("ResolutionDropdown", "Resolution:", settingsPanel.transform, new Vector2(0, yPos));
         
         yPos -= 50;
-        GameObject fullscreenToggle = CreateToggle("FullscreenToggle", "Полный экран", settingsPanel.transform, new Vector2(0, yPos));
+        GameObject fullscreenToggle = CreateToggle("FullscreenToggle", "Fullscreen", settingsPanel.transform, new Vector2(0, yPos));
         
         // Create audio section
         yPos -= 80;
-        CreateText("AudioLabel", "ЗВУК", settingsPanel.transform, new Vector2(0, yPos), 24);
+        CreateText("AudioLabel", "AUDIO", settingsPanel.transform, new Vector2(0, yPos), 24);
         
         yPos -= 50;
-        GameObject masterSlider = CreateSlider("MasterVolumeSlider", "Общая громкость:", settingsPanel.transform, new Vector2(0, yPos));
+        GameObject masterSlider = CreateSlider("MasterVolumeSlider", "Master Volume:", settingsPanel.transform, new Vector2(0, yPos));
         
         yPos -= 50;
-        GameObject musicSlider = CreateSlider("MusicVolumeSlider", "Музыка:", settingsPanel.transform, new Vector2(0, yPos));
+        GameObject musicSlider = CreateSlider("MusicVolumeSlider", "Music:", settingsPanel.transform, new Vector2(0, yPos));
         
         yPos -= 50;
-        GameObject sfxSlider = CreateSlider("SFXVolumeSlider", "Звуковые эффекты:", settingsPanel.transform, new Vector2(0, yPos));
+        GameObject sfxSlider = CreateSlider("SFXVolumeSlider", "Sound Effects:", settingsPanel.transform, new Vector2(0, yPos));
         
         // Create buttons
         yPos -= 80;
-        CreateButton("ApplyButton", "ПРИМЕНИТЬ", settingsPanel.transform, new Vector2(-100, yPos));
-        CreateButton("ResetButton", "СБРОС", settingsPanel.transform, new Vector2(0, yPos));
-        CreateButton("CloseButton", "ЗАКРЫТЬ", settingsPanel.transform, new Vector2(100, yPos));
+        CreateButton("ApplyButton", "APPLY", settingsPanel.transform, new Vector2(-100, yPos));
+        CreateButton("ResetButton", "RESET", settingsPanel.transform, new Vector2(0, yPos));
+        CreateButton("CloseButton", "CLOSE", settingsPanel.transform, new Vector2(100, yPos));
         
         // Assign components to settings manager
         settingsManager.qualityDropdown = qualityDropdown.GetComponent<Dropdown>();
@@ -262,9 +262,9 @@ public class SimpleSettingsCreator : MonoBehaviour
         dropdown.options.Clear();
         if (name.Contains("Quality"))
         {
-            dropdown.options.Add(new Dropdown.OptionData("Низкое"));
-            dropdown.options.Add(new Dropdown.OptionData("Среднее"));
-            dropdown.options.Add(new Dropdown.OptionData("Высокое"));
+            dropdown.options.Add(new Dropdown.OptionData("Low"));
+            dropdown.options.Add(new Dropdown.OptionData("Medium"));
+            dropdown.options.Add(new Dropdown.OptionData("High"));
         }
         else if (name.Contains("Resolution"))
         {

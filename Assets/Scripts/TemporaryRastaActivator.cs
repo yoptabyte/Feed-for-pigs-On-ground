@@ -41,11 +41,11 @@ public class TemporaryRastaActivator : MonoBehaviour
 
         if (audioSource == null)
         {
-            Debug.LogWarning("AudioSource не назначен в TemporaryRastaActivator.");
+            Debug.LogWarning("AudioSource not assigned in TemporaryRastaActivator.");
             audioSource = GetComponent<AudioSource>();
             if (audioSource == null)
             {
-                 Debug.LogError("Компонент AudioSource не найден на GameObject и не назначен вручную.");
+                 Debug.LogError("AudioSource component not found on GameObject and not assigned manually.");
             }
         }
     }
@@ -54,7 +54,7 @@ public class TemporaryRastaActivator : MonoBehaviour
     {
         if (other.CompareTag(triggerTag))
         {
-            Debug.Log($"Столкновение с триггером '{triggerTag}'. Активирую объекты, запускаю системы частиц и показываю UI Image.");
+            Debug.Log($"Collision with trigger '{triggerTag}'. Activating objects, starting particle systems and showing UI Image.");
 
             if (deactivationCoroutine != null)
             {
@@ -86,7 +86,7 @@ public class TemporaryRastaActivator : MonoBehaviour
             {
                 audioSource.clip = activationClip;
                 audioSource.Play();
-                Debug.Log("Запускаю проигрывание трека.");
+                Debug.Log("Starting track playback.");
             }
 
             deactivationCoroutine = StartCoroutine(DeactivateAfterDelay());
@@ -97,7 +97,7 @@ public class TemporaryRastaActivator : MonoBehaviour
     {
         yield return new WaitForSeconds(activationDuration);
 
-        Debug.Log($"Прошло {activationDuration} секунд. Деактивирую объекты, останавливаю системы частиц и скрываю UI Image.");
+        Debug.Log($"Passed {activationDuration} seconds. Deactivating objects, stopping particle systems and hiding UI Image.");
 
         foreach (GameObject obj in objectsToActivate)
         {
@@ -123,7 +123,7 @@ public class TemporaryRastaActivator : MonoBehaviour
         if (audioSource != null && audioSource.isPlaying)
         {
             audioSource.Stop();
-            Debug.Log("Останавливаю проигрывание трека.");
+            Debug.Log("Stopping track playback.");
         }
 
         deactivationCoroutine = null;
